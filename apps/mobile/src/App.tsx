@@ -52,6 +52,22 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 2500);
   };
 
+  // 스마트폰 모드 토글 (기본값: true, 데스크톱 시뮬레이터 뷰)
+  const [isPhoneMode, setIsPhoneMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('workshopsync_phone_mode');
+      return saved !== null ? saved === 'true' : true;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.toggle('phone-mode-active', isPhoneMode);
+      localStorage.setItem('workshopsync_phone_mode', String(isPhoneMode));
+    }
+  }, [isPhoneMode]);
+
   const myTeam = mockTeams.find((t) => t.id === currentUser?.teamId);
 
   // URL Hash 기반 딥링크 라우팅 및 브라우저 히스토리 동기화
@@ -225,8 +241,9 @@ export default function App() {
     showToast('💬 피드백 메모가 등록되었습니다.');
   };
 
-  // 1. [S-01] 입장 / 로그인 화면
-  if (currentView === 'login' || !currentUser) {
+  const renderContent = (): React.ReactNode => {
+    // 1. [S-01] 입장 / 로그인 화면
+    if (currentView === 'login' || !currentUser) {
     return (
       <div className="main-content" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100vh', padding: 24 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
@@ -1073,6 +1090,40 @@ export default function App() {
           {notifications.some((n) => !n.read) && <span className="tab-badge">N</span>}
         </button>
       </nav>
+    </>
+  );
+};
+
+  return (
+    <>
+      {/* 스마트폰 모드 토글 버튼 (화면 위 오른쪽 끝) */}
+      <button
+        className={`phone-mode-toggle-btn ${isPhoneMode ? 'active' : ''}`}
+        onClick={() => {
+          const next = !isPhoneMode;
+          setIsPhoneMode(next);
+          showToast(next ? '📱 스마트폰 모드가 활성화되었습니다.' : '💻 와이드 웹 모드로 전환되었습니다.');
+        }}
+        title="데스크톱에서 스마트폰 기기 프레임(목업)을 켜고 끕니다"
+        data-serial-id="S00-SEC01-BTN01"
+      >
+        <span className="ui-serial-badge" data-serial-id="S00-SEC01-BTN01" data-item-name="스마트폰 모드 토글">S00-SEC01-BTN01</span>
+        <span>{isPhoneMode ? '📱 스마트폰 모드 ON' : '📱 스마트폰 모드 OFF'}</span>
+      </button>
+
+      {/* 스마트폰 상단 다이나믹 아일랜드 데코레이션 */}
+      {isPhoneMode && (
+        <div className="phone-dynamic-island" aria-hidden="true">
+          <span className="dynamic-island-sensor" />
+          <span className="dynamic-island-lens" />
+        </div>
+      )}
+
+      {/* 화면 콘텐츠 */}
+      {renderContent()}
+
+      {/* 스마트폰 하단 홈 바 데코레이션 */}
+      {isPhoneMode && <div className="phone-home-indicator" aria-hidden="true" />}
 
       {/* 인앱 토스트 팝업 */}
       {toastMessage && (

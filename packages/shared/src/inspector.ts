@@ -72,26 +72,27 @@ export function initUiInspector() {
       }
       #ui-inspector-fab {
         position: fixed;
-        right: 14px;
-        top: 14px;
+        right: 16px;
+        bottom: 16px;
         z-index: 99998;
         background: #ffffff;
         color: #3182F6;
         border: 1px solid #E5E7EB;
-        padding: 6px 12px;
-        border-radius: 20px;
+        padding: 7px 14px;
+        border-radius: 24px;
         font-size: 11px;
         font-weight: 700;
         display: flex;
         align-items: center;
-        gap: 5px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        gap: 6px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.05);
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       }
       #ui-inspector-fab:hover {
         background: #F3F4F6;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
       }
       body.ui-inspect-active #ui-inspector-fab {
         background: #3182F6;
