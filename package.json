@@ -1,0 +1,19 @@
+{
+  "name": "workshopsync-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "./compile.sh all",
+    "dev": "./run_port.sh dev all",
+    "start": "./run_port.sh start all",
+    "stop": "./run_port.sh stop all",
+    "status": "./run_port.sh status"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
