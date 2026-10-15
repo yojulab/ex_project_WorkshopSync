@@ -28,6 +28,11 @@
       "sourceMaps": true,
       "smartStep": true,
       "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "WorkshopSync REST API 서버가 성공적으로 시작되었습니다",
+        "uriFormat": "http://localhost:30016",
+        "action": "openExternally"
+      },
       "env": {
         "NODE_ENV": "development",
         "PORT": "30015",
@@ -48,6 +53,11 @@
       "sourceMaps": true,
       "smartStep": true,
       "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "WorkshopSync REST API 서버가 성공적으로 시작되었습니다",
+        "uriFormat": "http://localhost:30016",
+        "action": "openExternally"
+      },
       "env": {
         "NODE_ENV": "development",
         "PORT": "30015",
