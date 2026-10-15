@@ -12,21 +12,6 @@
       "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "API Server: Node Debugger (Port 30015)",
-      "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/apps/api",
-      "program": "${workspaceFolder}/apps/api/dist/index.js",
-      "preLaunchTask": "build:api",
-      "env": {
-        "PORT": "30015",
-        "NODE_ENV": "development"
-      },
-      "sourceMaps": true,
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
-    },
-    {
       "name": "Mobile App: React PWA (Port 30016)",
       "type": "node",
       "request": "launch",
@@ -45,20 +30,6 @@
       "runtimeArgs": ["run", "dev"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
-    },
-    {
-      "name": "Chrome: 참석자 전용 앱 (Port 30016)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:30016",
-      "webRoot": "${workspaceFolder}/apps/mobile"
-    },
-    {
-      "name": "Chrome: 관리자 웹 포털 (Port 30017)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:30017",
-      "webRoot": "${workspaceFolder}/apps/admin"
     },
     {
       "name": "(선택) Chrome 디버거 연결 (Attach only - Port 9222)",
