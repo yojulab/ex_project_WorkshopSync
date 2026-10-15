@@ -1,8 +1,25 @@
 {
   "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Full Stack",
+      "configurations": [
+        "API (Port 30015)",
+        "Mobile App Server (Port 30016)",
+        "Admin Web Server (Port 30017)"
+      ]
+    },
+    {
+      "name": "Frontend Both (Mobile + Admin)",
+      "configurations": [
+        "Mobile App Server (Port 30016)",
+        "Admin Web Server (Port 30017)"
+      ]
+    }
+  ],
   "configurations": [
     {
-      "name": "🚀 Launch API & Auto-Start Frontends (All Servers / No Browser)",
+      "name": "Full Stack (API Debug + Auto Frontends)",
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/apps/api/dist/index.js",
@@ -22,7 +39,7 @@
       ]
     },
     {
-      "name": "🚀 Launch API Only (Port 30015)",
+      "name": "API (Port 30015)",
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/apps/api/dist/index.js",
@@ -42,7 +59,7 @@
       ]
     },
     {
-      "name": "📱 Start Mobile Dev Server (Port 30016 / No Browser)",
+      "name": "Mobile App Server (Port 30016)",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/apps/mobile",
@@ -51,7 +68,7 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "🖥️ Start Admin Dev Server (Port 30017 / No Browser)",
+      "name": "Admin Web Server (Port 30017)",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/apps/admin",
@@ -60,7 +77,7 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "🔗 Attach to API (Port 9229)",
+      "name": "Attach to API (Port 9229)",
       "type": "node",
       "request": "attach",
       "port": 9229,
@@ -70,23 +87,6 @@
       "outFiles": [
         "${workspaceFolder}/apps/api/dist/**/*.js",
         "${workspaceFolder}/packages/shared/dist/**/*.js"
-      ]
-    }
-  ],
-  "compounds": [
-    {
-      "name": "🌐 Full Stack Servers (API + Mobile + Admin / No Browser)",
-      "configurations": [
-        "🚀 Launch API Only (Port 30015)",
-        "📱 Start Mobile Dev Server (Port 30016 / No Browser)",
-        "🖥️ Start Admin Dev Server (Port 30017 / No Browser)"
-      ]
-    },
-    {
-      "name": "⚡ Frontend Servers (Mobile + Admin / No Browser)",
-      "configurations": [
-        "📱 Start Mobile Dev Server (Port 30016 / No Browser)",
-        "🖥️ Start Admin Dev Server (Port 30017 / No Browser)"
       ]
     }
   ]
