@@ -1,27 +1,122 @@
-import { Workshop, Agenda, Team, Participant, Mission, Submission, Feedback, Award, NotificationItem } from './types';
+import { Workshop, Agenda, Team, Participant, Mission, Submission, Feedback, Award, NotificationItem, GlobalActivityLog } from './types';
 
-export const mockWorkshop: Workshop = {
-  id: 'ws-2026-ai',
-  title: '2026 하반기 AI 에이전트 서비스 혁신 워크샵',
-  description: '기업 현장의 업무 자동화와 고객 경험 혁신을 위한 생성형 AI 에이전트 기획 및 실전 프로토타이핑 워크샵',
-  organizerCompany: '(주)넥스트웨이브 이노베이션 & 글로벌 테크 파트너스',
-  location: '판교 스타트업 캠퍼스 2동 컨퍼런스홀 A (경기 성남시 분당구 판교로 289)',
-  locationDetail: '지하 1층 주차 가능 (무료 주차권 지급), 대중교통 이용 시 판교역 1번 출구 셔틀버스 운행',
-  startAt: '2026-10-15T09:30:00+09:00',
-  endAt: '2026-10-15T18:00:00+09:00',
-  status: 'live',
-  joinCode: 'WS2026',
-  checkinCode: 'CHECK777',
-  notice: '📢 오후 16:30부터 각 조별 결과물 선호도 투표가 시작됩니다. 자기 조에는 투표할 수 없으니 타 조의 작업물을 꼼꼼히 확인해 주세요!',
-  prepItems: [
-    '개인 노트북 및 충전기 (멀티탭 조별 배치 완료)',
-    '신분증 또는 명함 (출입증 발급용)',
-    '조별 슬라이드 작성 툴 (Figma / Canva / Google Slides 등)'
-  ],
-  resultsPublic: false,
-  votingStatus: 'open',
-  createdAt: '2026-10-10T09:00:00+09:00'
-};
+export const mockWorkshops: Workshop[] = [
+  {
+    id: 'ws-2026-ai',
+    title: '2026 하반기 AI 에이전트 서비스 혁신 워크샵',
+    description: '기업 현장의 업무 자동화와 고객 경험 혁신을 위한 생성형 AI 에이전트 기획 및 실전 프로토타이핑 워크샵',
+    category: 'AI / 생성형 모델',
+    organizerCompany: '(주)넥스트웨이브 이노베이션 & 글로벌 테크 파트너스',
+    location: '판교 스타트업 캠퍼스 2동 컨퍼런스홀 A (경기 성남시 분당구 판교로 289)',
+    locationDetail: '지하 1층 주차 가능 (무료 주차권 지급), 대중교통 이용 시 판교역 1번 출구 셔틀버스 운행',
+    startAt: '2026-10-15T09:30:00+09:00',
+    endAt: '2026-10-15T18:00:00+09:00',
+    status: 'live',
+    joinCode: 'WS2026',
+    checkinCode: 'CHECK777',
+    notice: '📢 오후 16:30부터 각 조별 결과물 선호도 투표가 시작됩니다. 자기 조에는 투표할 수 없으니 타 조의 작업물을 꼼꼼히 확인해 주세요!',
+    prepItems: [
+      '개인 노트북 및 충전기 (멀티탭 조별 배치 완료)',
+      '신분증 또는 명함 (출입증 발급용)',
+      '조별 슬라이드 작성 툴 (Figma / Canva / Google Slides 등)'
+    ],
+    resultsPublic: false,
+    votingStatus: 'open',
+    createdAt: '2026-10-10T09:00:00+09:00'
+  },
+  {
+    id: 'ws-2026-cloud',
+    title: '2026 클라우드 네이티브 MSA 아키텍처 해커톤',
+    description: '쿠버네티스와 서비스 메시 기반의 대규모 트래픽 탄력 분산 아키텍처 설계 및 장애 대응 실전 스프린트',
+    category: '클라우드 / 인프라',
+    organizerCompany: '클라우드 인프라 엔지니어링 협회',
+    location: '강남 드림플러스 지하 1층 이벤트홀 (서울 서초구 강남대로 311)',
+    locationDetail: '강남역 5번 출구 도보 5분, 본 건물 주차 불가 (인근 공영주차장 이용 권장)',
+    startAt: '2026-10-15T10:00:00+09:00',
+    endAt: '2026-10-15T19:00:00+09:00',
+    status: 'live',
+    joinCode: 'CLOUD26',
+    checkinCode: 'MSA888',
+    notice: '⚡ 13:00부터 조별 쿠버네티스 카오스 엔지니어링 미션 1차가 개시됩니다. 로컬 k8s 클러스터 접근 권한을 확인하세요.',
+    prepItems: [
+      'Docker Desktop & kubectl 설치 완료된 노트북',
+      'AWS / GCP 클라우드 크레딧 활성화 계정',
+      '조별 아키텍처 다이어그램 툴 (Excalidraw 등)'
+    ],
+    resultsPublic: false,
+    votingStatus: 'before',
+    createdAt: '2026-10-11T11:00:00+09:00'
+  },
+  {
+    id: 'ws-2026-design',
+    title: '2026 글로벌 B2B SaaS 프로덕트 디자인 스프린트',
+    description: '실리콘밸리 엔터프라이즈 UX 패턴과 디자인 시스템 토큰을 활용한 B2B SaaS 신규 대시보드 리디자인 스프린트',
+    category: '디자인 / UX',
+    organizerCompany: '디자인 길드 코리아 & 프로덕트 디자인 포럼',
+    location: '여의도 파크원 타워2 14층 대회의실 (서울 영등포구 여의대로 108)',
+    locationDetail: '여의도역 3번 출구 지하 통로 연결, 게스트 등록 후 출입증 수령 필수',
+    startAt: '2026-10-18T09:00:00+09:00',
+    endAt: '2026-10-18T18:00:00+09:00',
+    status: 'ready',
+    joinCode: 'DESIGN26',
+    checkinCode: 'UX999',
+    notice: '🎨 워크샵 시작 전 Figma 최신 버전 업데이트 및 사전 배포된 디자인 시스템 컴포넌트 라이브러리를 임포트해주세요.',
+    prepItems: [
+      'Figma 프로페셔널 계정 로그인 기기',
+      '필기도구 및 포스트잇 (현장 제공 외 개인용)',
+      '자사 제품 대시보드 스크린샷 3종'
+    ],
+    resultsPublic: false,
+    votingStatus: 'before',
+    createdAt: '2026-10-12T14:00:00+09:00'
+  },
+  {
+    id: 'ws-2026-data',
+    title: '2026 빅데이터 & LLM 파이프라인 실전 캠프',
+    description: '대용량 임베딩 벡터 서치 엔진 구축과 실시간 RAG 파이프라인 최적화 집중 실습',
+    category: '데이터 엔지니어링',
+    organizerCompany: '데이터 사이언스 얼라이언스',
+    location: '양재 aT센터 제2전시장 3층 세미나룸 (서울 서초구 강남대로 27)',
+    locationDetail: '신분당선 양재시민의숲역 4번 출구 직결, 전일 주차 50% 할인권 지급',
+    startAt: '2026-10-10T09:00:00+09:00',
+    endAt: '2026-10-10T18:00:00+09:00',
+    status: 'closed',
+    joinCode: 'DATA26',
+    checkinCode: 'LLM000',
+    notice: '🎉 워크샵이 성공적으로 종료되었습니다! 결과물과 수상작 명단은 결과 탭에서 확인하실 수 있습니다.',
+    prepItems: [
+      'Python 3.11 환경 및 GPU 클라우드 인스턴스',
+      'HuggingFace 토큰 준비'
+    ],
+    resultsPublic: true,
+    votingStatus: 'closed',
+    createdAt: '2026-10-05T08:00:00+09:00'
+  },
+  {
+    id: 'ws-2026-fintech',
+    title: '2026 디지털 금융 혁신 & 오픈뱅킹 해커톤',
+    description: '마이데이터 API와 금융 보안 가이드라인을 준수한 차세대 자산관리 및 결제 UX 아이디어 프로토타이핑',
+    category: '금융 / 핀테크',
+    organizerCompany: '핀테크 이노베이션 랩',
+    location: '을지로 파인에비뉴 A동 8층 대회의실 (서울 중구 을지로 100)',
+    locationDetail: '을지로3가역 12번 출구 바로 앞',
+    startAt: '2026-10-25T09:30:00+09:00',
+    endAt: '2026-10-25T18:30:00+09:00',
+    status: 'ready',
+    joinCode: 'FINTECH',
+    checkinCode: 'FIN123',
+    notice: '💳 참가자 사전 설문조사를 작성해주시면 조 편성 시 희망 금융 직무를 우선 반영합니다.',
+    prepItems: [
+      '신분증, 명함 20매 (네트워킹용)',
+      '노트북 및 개인 개발 환경'
+    ],
+    resultsPublic: false,
+    votingStatus: 'before',
+    createdAt: '2026-10-14T10:00:00+09:00'
+  }
+];
+
+export const mockWorkshop: Workshop = mockWorkshops[0];
 
 export const mockAgendas: Agenda[] = [
   {
@@ -380,5 +475,56 @@ export const mockAwards: Award[] = [
     participantName: '이수진 (카카오뱅크 / 1조)',
     reason: '온보딩 에이전트의 완성도 높은 프로토타입 UI 디자인 및 신속한 조별 협업 주도',
     announcedAt: '2026-10-15T17:15:00+09:00'
+  }
+];
+
+export const mockGlobalActivityLogs: GlobalActivityLog[] = [
+  {
+    id: 'log-1',
+    workshopId: 'ws-2026-ai',
+    workshopTitle: '2026 하반기 AI 에이전트 서비스 혁신 워크샵',
+    type: 'submission',
+    message: '1조 · 생성형 파이오니어가 [미션 1] 결과물(v2)을 성공적으로 제출했습니다.',
+    timestamp: '2026-10-15T15:42:10+09:00'
+  },
+  {
+    id: 'log-2',
+    workshopId: 'ws-2026-cloud',
+    workshopTitle: '2026 클라우드 네이티브 MSA 아키텍처 해커톤',
+    type: 'checkin',
+    message: '최동현 참석자(AWS 코리아 / 3조)가 현장 체크인을 완료했습니다.',
+    timestamp: '2026-10-15T15:38:00+09:00'
+  },
+  {
+    id: 'log-3',
+    workshopId: 'ws-2026-ai',
+    workshopTitle: '2026 하반기 AI 에이전트 서비스 혁신 워크샵',
+    type: 'vote',
+    message: '참석자들의 선호도 투표가 실시간으로 집계되고 있습니다 (누적 18표).',
+    timestamp: '2026-10-15T15:35:12+09:00'
+  },
+  {
+    id: 'log-4',
+    workshopId: 'ws-2026-cloud',
+    workshopTitle: '2026 클라우드 네이티브 MSA 아키텍처 해커톤',
+    type: 'submission',
+    message: '2조 · 카오스 몽키팀이 [카나리 배포 파이프라인] 결과물을 최초 등록했습니다.',
+    timestamp: '2026-10-15T15:20:45+09:00'
+  },
+  {
+    id: 'log-5',
+    workshopId: 'ws-2026-design',
+    workshopTitle: '2026 글로벌 B2B SaaS 프로덕트 디자인 스프린트',
+    type: 'status_change',
+    message: '참가자 16명 사전 설문 응답 및 조 편성(4개 조) 사전 배정이 완료되었습니다.',
+    timestamp: '2026-10-15T14:10:00+09:00'
+  },
+  {
+    id: 'log-6',
+    workshopId: 'ws-2026-data',
+    workshopTitle: '2026 빅데이터 & LLM 파이프라인 실전 캠프',
+    type: 'notice',
+    message: '워크샵 최종 시상식 종료 및 참석자 수료증 발송이 완료되었습니다.',
+    timestamp: '2026-10-10T18:30:00+09:00'
   }
 ];
