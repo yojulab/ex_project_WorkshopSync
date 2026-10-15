@@ -1,0 +1,71 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 Launch API (Port 30015)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/api/dist/index.js",
+      "preLaunchTask": "build-api",
+      "cwd": "${workspaceFolder}/apps/api",
+      "sourceMaps": true,
+      "smartStep": true,
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "30015",
+        "API_PORT": "30015"
+      },
+      "outFiles": [
+        "${workspaceFolder}/apps/api/dist/**/*.js",
+        "${workspaceFolder}/packages/shared/dist/**/*.js"
+      ]
+    },
+    {
+      "name": "🔗 Attach to API (Port 9229)",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "restart": true,
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}/apps/api",
+      "outFiles": [
+        "${workspaceFolder}/apps/api/dist/**/*.js",
+        "${workspaceFolder}/packages/shared/dist/**/*.js"
+      ]
+    },
+    {
+      "name": "📱 Launch Mobile App (Chrome / Port 30016)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:30016",
+      "webRoot": "${workspaceFolder}/apps/mobile",
+      "sourceMaps": true
+    },
+    {
+      "name": "🖥️ Launch Admin Web (Chrome / Port 30017)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:30017",
+      "webRoot": "${workspaceFolder}/apps/admin",
+      "sourceMaps": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🌐 Full Stack (API + Mobile + Admin)",
+      "configurations": [
+        "🚀 Launch API (Port 30015)",
+        "📱 Launch Mobile App (Chrome / Port 30016)",
+        "🖥️ Launch Admin Web (Chrome / Port 30017)"
+      ]
+    },
+    {
+      "name": "⚡ Frontend Both (Mobile + Admin)",
+      "configurations": [
+        "📱 Launch Mobile App (Chrome / Port 30016)",
+        "🖥️ Launch Admin Web (Chrome / Port 30017)"
+      ]
+    }
+  ]
+}

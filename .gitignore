@@ -34,6 +34,8 @@ Thumbs.db
 .vscode/*
 !.vscode/launch.json
 !.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/extensions.json
 
 # Test outputs
 coverage/
