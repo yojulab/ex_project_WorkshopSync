@@ -33,39 +33,6 @@
         "${workspaceFolder}/apps/api/dist/**/*.js",
         "${workspaceFolder}/packages/shared/dist/**/*.js"
       ]
-    },
-    {
-      "name": "📱 Launch Mobile App (Chrome / Port 30016)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:30016",
-      "webRoot": "${workspaceFolder}/apps/mobile",
-      "sourceMaps": true
-    },
-    {
-      "name": "🖥️ Launch Admin Web (Chrome / Port 30017)",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:30017",
-      "webRoot": "${workspaceFolder}/apps/admin",
-      "sourceMaps": true
-    }
-  ],
-  "compounds": [
-    {
-      "name": "🌐 Full Stack (API + Mobile + Admin)",
-      "configurations": [
-        "🚀 Launch API (Port 30015)",
-        "📱 Launch Mobile App (Chrome / Port 30016)",
-        "🖥️ Launch Admin Web (Chrome / Port 30017)"
-      ]
-    },
-    {
-      "name": "⚡ Frontend Both (Mobile + Admin)",
-      "configurations": [
-        "📱 Launch Mobile App (Chrome / Port 30016)",
-        "🖥️ Launch Admin Web (Chrome / Port 30017)"
-      ]
     }
   ]
 }
