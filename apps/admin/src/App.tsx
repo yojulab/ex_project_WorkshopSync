@@ -61,15 +61,15 @@ export default function App() {
   // 메뉴 변경 시 Hash 및 Document Title 동기화
   useEffect(() => {
     const menuTitleMap: Record<string, string> = {
-      dashboard: '종합 대시보드 (A-00)',
-      workshop: '워크샵 마스터 (A-02)',
-      participants: '참석자 & 조 편성 관리 (A-04)',
-      missions: '아젠다 & 미션 관리 (A-03)',
-      submissions: '제출 현황 모니터링 (A-05)',
-      voting: '투표 및 순위 제어 (A-06)',
-      awards: '우승 및 시상 발송 (A-07)',
-      notice: '공지 및 푸시 발송 (A-08)',
-      reports: '결과 리포트 내보내기 (A-09)'
+      dashboard: '종합 대시보드',
+      workshop: '워크샵 마스터',
+      participants: '참석자 & 조 편성 관리',
+      missions: '아젠다 & 미션 관리',
+      submissions: '제출 현황 모니터링',
+      voting: '투표 및 순위 제어',
+      awards: '우승 및 시상 발송',
+      notice: '공지 및 푸시 발송',
+      reports: '결과 리포트 내보내기'
     };
     const title = `${menuTitleMap[activeMenu] || activeMenu} - WorkshopSync 관리자`;
     document.title = title;
@@ -135,7 +135,8 @@ export default function App() {
               data-serial-id="A00-SEC01-NAV01"
             >
               <span className="ui-serial-badge" data-serial-id="A00-SEC01-NAV01" data-item-name="종합 대시보드 메뉴">A00-SEC01-NAV01</span>
-              <span>📊</span> 종합 대시보드 (A-00)
+              <span>📊</span>
+              <span>종합 대시보드</span>
             </button>
           </li>
           <li>
@@ -145,7 +146,8 @@ export default function App() {
               data-serial-id="A02-SEC01-NAV01"
             >
               <span className="ui-serial-badge" data-serial-id="A02-SEC01-NAV01" data-item-name="워크샵 마스터 메뉴">A02-SEC01-NAV01</span>
-              <span>🏢</span> 워크샵 마스터 (A-02)
+              <span>🏢</span>
+              <span>워크샵 마스터</span>
             </button>
           </li>
           <li>
@@ -155,7 +157,8 @@ export default function App() {
               data-serial-id="A04-SEC01-NAV01"
             >
               <span className="ui-serial-badge" data-serial-id="A04-SEC01-NAV01" data-item-name="참석자 및 조 관리 메뉴">A04-SEC01-NAV01</span>
-              <span>👥</span> 참석자 & 조 편성 (A-04)
+              <span>👥</span>
+              <span>참석자 & 조 편성</span>
             </button>
           </li>
           <li>
@@ -165,7 +168,8 @@ export default function App() {
               data-serial-id="A03-SEC01-NAV01"
             >
               <span className="ui-serial-badge" data-serial-id="A03-SEC01-NAV01" data-item-name="아젠다 및 미션 관리 메뉴">A03-SEC01-NAV01</span>
-              <span>📅</span> 아젠다 & 미션 (A-03)
+              <span>📅</span>
+              <span>아젠다 & 미션</span>
             </button>
           </li>
           <li>
@@ -175,7 +179,8 @@ export default function App() {
               data-serial-id="A05-SEC01-NAV01"
             >
               <span className="ui-serial-badge" data-serial-id="A05-SEC01-NAV01" data-item-name="제출 현황 모니터링 메뉴">A05-SEC01-NAV01</span>
-              <span>📊</span> 제출 모니터링 (A-05)
+              <span>📊</span>
+              <span>제출 모니터링</span>
             </button>
           </li>
           <li>
@@ -185,7 +190,8 @@ export default function App() {
               data-serial-id="A06-SEC01-NAV01"
             >
               <span className="ui-serial-badge" data-serial-id="A06-SEC01-NAV01" data-item-name="투표 및 순위 제어 메뉴">A06-SEC01-NAV01</span>
-              <span>🗳️</span> 투표 & 순위 제어 (A-06)
+              <span>🗳️</span>
+              <span>투표 & 순위 제어</span>
             </button>
           </li>
           <li>
@@ -195,7 +201,8 @@ export default function App() {
               data-serial-id="A07-SEC01-NAV01"
             >
               <span className="ui-serial-badge" data-serial-id="A07-SEC01-NAV01" data-item-name="우승 시상 관리 메뉴">A07-SEC01-NAV01</span>
-              <span>🏆</span> 우승 & 시상 발송 (A-07)
+              <span>🏆</span>
+              <span>우승 & 시상 발송</span>
             </button>
           </li>
           <li>
@@ -205,7 +212,8 @@ export default function App() {
               data-serial-id="A08-SEC01-NAV01"
             >
               <span className="ui-serial-badge" data-serial-id="A08-SEC01-NAV01" data-item-name="공지 및 푸시 발송 메뉴">A08-SEC01-NAV01</span>
-              <span>📢</span> 공지 & 푸시 발송 (A-08)
+              <span>📢</span>
+              <span>공지 & 푸시 발송</span>
             </button>
           </li>
           <li>
@@ -215,7 +223,8 @@ export default function App() {
               data-serial-id="A09-SEC01-NAV01"
             >
               <span className="ui-serial-badge" data-serial-id="A09-SEC01-NAV01" data-item-name="결과 리포트 내보내기 메뉴">A09-SEC01-NAV01</span>
-              <span>📁</span> 결과 리포트 (A-09)
+              <span>📁</span>
+              <span>결과 리포트</span>
             </button>
           </li>
         </ul>
@@ -390,7 +399,7 @@ export default function App() {
                         style={{ fontSize: 12, padding: '4px 10px' }}
                         onClick={() => setActiveMenu('missions')}
                       >
-                        아젠다 관리 (A-03) →
+                        아젠다 관리 →
                       </button>
                     </div>
                   </div>
@@ -408,7 +417,7 @@ export default function App() {
                         style={{ fontSize: 12, padding: '4px 10px' }}
                         onClick={() => setActiveMenu('submissions')}
                       >
-                        제출 모니터링 상세 (A-05) →
+                        제출 모니터링 상세 →
                       </button>
                     </div>
 
@@ -621,7 +630,7 @@ export default function App() {
           {activeMenu === 'workshop' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 800 }}>워크샵 마스터 설정 (A-02)</h2>
+                <h2 style={{ fontSize: 22, fontWeight: 800 }}>워크샵 마스터 설정</h2>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button className="btn-outline">초대 링크 복사</button>
                   <button className="btn-primary" onClick={() => showToast('워크샵 정보가 저장되었습니다.')}>변경사항 저장</button>
@@ -680,7 +689,7 @@ export default function App() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <div>
-                  <h2 style={{ fontSize: 22, fontWeight: 800 }}>참석자 명단 및 조 편성 매니저 (A-04)</h2>
+                  <h2 style={{ fontSize: 22, fontWeight: 800 }}>참석자 명단 및 조 편성 매니저</h2>
                   <p style={{ fontSize: 13, color: 'var(--admin-text-sub)', marginTop: 4 }}>총 20명 등록 / 5개 조 편성 완료</p>
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
@@ -740,7 +749,7 @@ export default function App() {
           {activeMenu === 'missions' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 800 }}>아젠다 & 미션 마스터 (A-03)</h2>
+                <h2 style={{ fontSize: 22, fontWeight: 800 }}>아젠다 & 미션 마스터</h2>
                 <button className="btn-primary" onClick={() => showToast('신규 미션이 등록되었습니다.')}>+ 새 미션 추가</button>
               </div>
 
@@ -770,7 +779,7 @@ export default function App() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <div>
-                  <h2 style={{ fontSize: 22, fontWeight: 800 }}>조별 작업물 제출 현황 모니터링 (A-05)</h2>
+                  <h2 style={{ fontSize: 22, fontWeight: 800 }}>조별 작업물 제출 현황 모니터링</h2>
                   <p style={{ fontSize: 13, color: 'var(--admin-text-sub)', marginTop: 4 }}>실시간 업로드 및 버전 관리 매트릭스</p>
                 </div>
                 <button className="btn-outline" onClick={() => showToast('최신 상태로 새로고침되었습니다.')}>🔄 새로고침</button>
@@ -824,7 +833,7 @@ export default function App() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <div>
-                  <h2 style={{ fontSize: 22, fontWeight: 800 }}>투표 운영 및 순위 제어 (A-06)</h2>
+                  <h2 style={{ fontSize: 22, fontWeight: 800 }}>투표 운영 및 순위 제어</h2>
                   <p style={{ fontSize: 13, color: 'var(--admin-text-sub)', marginTop: 4 }}>
                     골든 룰 #2: 순위 공개 토글 전까지는 참석자 앱에 실시간 득표수가 블라인드 처리됩니다.
                   </p>
@@ -897,7 +906,7 @@ export default function App() {
           {activeMenu === 'awards' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 800 }}>우승팀 & 최고 작업자 시상 발송 (A-07)</h2>
+                <h2 style={{ fontSize: 22, fontWeight: 800 }}>우승팀 & 최고 작업자 시상 발송</h2>
                 <button
                   className="btn-primary"
                   style={{ background: '#F59E0B' }}
@@ -947,7 +956,7 @@ export default function App() {
           {activeMenu === 'notice' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 800 }}>실시간 공지 및 푸시 알림 발송 (A-08)</h2>
+                <h2 style={{ fontSize: 22, fontWeight: 800 }}>실시간 공지 및 푸시 알림 발송</h2>
               </div>
 
               <div className="admin-card" style={{ maxWidth: 700 }}>
@@ -1008,7 +1017,7 @@ export default function App() {
           {activeMenu === 'reports' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h2 style={{ fontSize: 22, fontWeight: 800 }}>결과 리포트 내보내기 (A-09)</h2>
+                <h2 style={{ fontSize: 22, fontWeight: 800 }}>결과 리포트 내보내기</h2>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>

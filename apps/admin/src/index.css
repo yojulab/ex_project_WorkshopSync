@@ -66,7 +66,12 @@ body {
   gap: 4px;
 }
 
+[data-serial-id] {
+  position: relative;
+}
+
 .sidebar-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -81,6 +86,19 @@ body {
   width: 100%;
   text-align: left;
   transition: all 0.15s;
+}
+
+/* Sidebar Item UI Tag Badge - 우측 끝에 안정적으로 부착 */
+.sidebar-item .ui-serial-badge {
+  top: 50% !important;
+  right: 10px !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.sidebar-item .ui-serial-badge:hover {
+  transform: translateY(-50%) scale(1.08) !important;
 }
 
 .sidebar-item:hover {
