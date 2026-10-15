@@ -54,6 +54,61 @@ export default function App() {
 
   const myTeam = mockTeams.find((t) => t.id === currentUser?.teamId);
 
+  // URL Hash 기반 딥링크 라우팅 및 브라우저 히스토리 동기화
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (!hash) return;
+      const params = new URLSearchParams(hash);
+      const view = params.get('view');
+      const tab = params.get('tab');
+      if (view && ['main', 'login', 'checkin', 'info', 'agenda', 'upload', 'dashboard', 'celebrate'].includes(view)) {
+        setCurrentView(view as any);
+      }
+      if (tab && ['home', 'mission', 'gallery', 'vote', 'noti'].includes(tab)) {
+        setActiveTab(tab as any);
+        if (!view) setCurrentView('main');
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // View / Tab 전환 시 Hash 및 Page Title 동기화
+  useEffect(() => {
+    let hash = '';
+    let title = 'WorkshopSync';
+    if (currentView !== 'main') {
+      hash = `view=${currentView}`;
+      const titleMap: Record<string, string> = {
+        login: '입장 및 인증 (S-01)',
+        checkin: '현장 참석 체크인 (S-02)',
+        info: '워크샵 정보 및 조 편성 (S-04)',
+        agenda: '아젠다 타임라인 (S-05)',
+        upload: '작업물 업로드 (S-07)',
+        dashboard: '제출 현황 대시보드 (S-08)',
+        celebrate: '우승 축하 화면 (S-12)'
+      };
+      title = `${titleMap[currentView] || currentView} - WorkshopSync`;
+    } else {
+      hash = `tab=${activeTab}`;
+      const tabTitleMap: Record<string, string> = {
+        home: '홈 대시보드 (S-03)',
+        mission: '미션 목록 (S-06)',
+        gallery: '결과물 같이보기 (S-09)',
+        vote: '선호도 투표 및 순위 (S-10, S-11)',
+        noti: '알림함 (S-13)'
+      };
+      title = `${tabTitleMap[activeTab] || activeTab} - WorkshopSync`;
+    }
+    document.title = title;
+    if (window.location.hash !== `#${hash}`) {
+      window.history.replaceState(null, '', `#${hash}`);
+    }
+  }, [currentView, activeTab]);
+
   // 축하 컨페티 실행 함수
   const triggerConfetti = () => {
     confetti({

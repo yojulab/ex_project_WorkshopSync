@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   mockWorkshop,
   mockAgendas,
@@ -35,6 +35,42 @@ export default function App() {
   };
 
   const checkedInCount = participants.filter((p) => !!p.checkedInAt).length;
+
+  // URL Hash 기반 관리자 딥링크 라우팅
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (!hash) return;
+      const params = new URLSearchParams(hash);
+      const menu = params.get('menu');
+      if (menu && ['workshop', 'participants', 'missions', 'submissions', 'voting', 'awards', 'notice', 'reports'].includes(menu)) {
+        setActiveMenu(menu as any);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // 메뉴 변경 시 Hash 및 Document Title 동기화
+  useEffect(() => {
+    const menuTitleMap: Record<string, string> = {
+      workshop: '워크샵 마스터 (A-02)',
+      participants: '참석자 & 조 편성 관리 (A-04)',
+      missions: '아젠다 & 미션 관리 (A-03)',
+      submissions: '제출 현황 모니터링 (A-05)',
+      voting: '투표 및 순위 제어 (A-06)',
+      awards: '우승 및 시상 발송 (A-07)',
+      notice: '공지 및 푸시 발송 (A-08)',
+      reports: '결과 리포트 내보내기 (A-09)'
+    };
+    const title = `${menuTitleMap[activeMenu] || activeMenu} - WorkshopSync 관리자`;
+    document.title = title;
+    if (window.location.hash !== `#menu=${activeMenu}`) {
+      window.history.replaceState(null, '', `#menu=${activeMenu}`);
+    }
+  }, [activeMenu]);
 
   // 자동 랜덤 조 편성
   const handleAutoAssignTeams = () => {
