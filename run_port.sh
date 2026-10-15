@@ -29,6 +29,18 @@
 
 set -uo pipefail
 
+# source(.)로 호출되었는지 검사하여 터미널 강제 종료 방지
+(return 0 2>/dev/null) && _RUN_PORT_SOURCED=1 || _RUN_PORT_SOURCED=0
+
+safe_exit() {
+  local code=${1:-0}
+  if [ "$_RUN_PORT_SOURCED" -eq 1 ]; then
+    return "$code" 2>/dev/null || true
+  else
+    exit "$code"
+  fi
+}
+
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="${PROJECT_DIR}/logs"
 TODAY=$(date +"%Y%m%d")
@@ -74,22 +86,62 @@ is_port_in_use() {
   return 1
 }
 
-# 포트 점유 PID 획득 (fuser -> pgrep 순차 확인)
+# 안전 PID 필터: 현재 셸($$), 부모 셸($PPID), init(1) 등 보호 대상 제외
+filter_safe_pids() {
+  local raw_pids="$1"
+  local my_pid=$$
+  local parent_pid=${PPID:-0}
+  local safe_list=""
+
+  for p in $raw_pids; do
+    if [[ "$p" =~ ^[0-9]+$ ]]; then
+      if [ "$p" -ne 1 ] && [ "$p" -ne "$my_pid" ] && [ "$p" -ne "$parent_pid" ]; then
+        safe_list="${safe_list} ${p}"
+      fi
+    fi
+  done
+  echo "$safe_list" | xargs
+}
+
+# 포트 점유 PID 획득 (fuser -> PID 파일 -> 정밀 pgrep 순차 확인 및 안전 필터 적용)
 get_port_pids() {
   local port=$1
   local pids=""
 
+  # 1. fuser로 해당 포트 TCP 리스닝 프로세스 PID 확인
   if command -v fuser >/dev/null 2>&1; then
     pids=$(fuser "${port}/tcp" 2>/dev/null || true)
   fi
+
+  # 2. PID 파일 확인
+  if [ -z "$pids" ]; then
+    local meta
+    meta=$(get_service_meta "$port")
+    local ws_path
+    ws_path=$(echo "$meta" | cut -d: -f1)
+    local sname
+    sname=$(basename "$ws_path")
+    local pid_file="${LOG_DIR}/${sname}.pid"
+    if [ -f "$pid_file" ]; then
+      local saved_pid
+      saved_pid=$(cat "$pid_file" 2>/dev/null || true)
+      if [ -n "$saved_pid" ] && kill -0 "$saved_pid" 2>/dev/null; then
+        pids="$saved_pid"
+      fi
+    fi
+  fi
+
+  # 3. 정밀 pgrep fallback (터미널 셸/에디터 등이 오폭되지 않도록 정밀 한정)
   if [ -z "$pids" ]; then
     case "$port" in
-      30015) pids=$(pgrep -f "(node.*30015|express.*30015|apps/api)" 2>/dev/null || true) ;;
-      30016) pids=$(pgrep -f "(vite.*30016|apps/mobile)" 2>/dev/null || true) ;;
-      30017) pids=$(pgrep -f "(vite.*30017|apps/admin)" 2>/dev/null || true) ;;
+      30015) pids=$(pgrep -f "node.*(30015|apps/api/dist)" 2>/dev/null || true) ;;
+      30016) pids=$(pgrep -f "vite.*(30016|apps/mobile)" 2>/dev/null || true) ;;
+      30017) pids=$(pgrep -f "vite.*(30017|apps/admin)" 2>/dev/null || true) ;;
     esac
   fi
-  echo "$pids" | tr '\n' ' ' | xargs
+
+  # 4. 현재 터미널 셸($$), 부모 터미널($PPID) 절대 보호 필터링
+  filter_safe_pids "$pids"
 }
 
 # 서비스 메타데이터 조회: 이름, 워크스페이스/폴더경로, 빌드산출물 파일
@@ -161,7 +213,7 @@ cmd_build() {
       ;;
     *)
       echo -e "${RED}잘못된 대상입니다: ${target} (사용 가능: all, 30015, 30016, 30017)${NC}"
-      exit 1
+      safe_exit 1
       ;;
   esac
 }
@@ -173,7 +225,13 @@ stop_service() {
   local port=$1
   local meta
   meta=$(get_service_meta "$port")
-  local title=$(echo "$meta" | cut -d: -f2)
+  local ws_path
+  ws_path=$(echo "$meta" | cut -d: -f1)
+  local service_name
+  service_name=$(basename "$ws_path")
+  local pid_file="${LOG_DIR}/${service_name}.pid"
+  local title
+  title=$(echo "$meta" | cut -d: -f2)
   local pids
   pids=$(get_port_pids "$port")
 
@@ -186,8 +244,10 @@ stop_service() {
     if [ -n "$remain_pids" ]; then
       kill -9 $remain_pids 2>/dev/null || true
     fi
+    rm -f "$pid_file" 2>/dev/null || true
     echo -e "${YELLOW}종료 완료 (PID: ${pids})${NC}"
   else
+    rm -f "$pid_file" 2>/dev/null || true
     echo -e "${NC}실행 중인 프로세스 없음${NC}"
   fi
 }
@@ -205,7 +265,7 @@ cmd_stop() {
       ;;
     *)
       echo -e "${RED}잘못된 대상입니다: ${target}${NC}"
-      exit 1
+      safe_exit 1
       ;;
   esac
 }
@@ -223,6 +283,7 @@ start_service() {
   local build_file=$(echo "$meta" | cut -d: -f3)
   local service_name=$(basename "$ws_path")
   local log_file="${LOG_DIR}/workshopsync_${service_name}_${TODAY}.log"
+  local pid_file="${LOG_DIR}/${service_name}.pid"
 
   if [ ! -d "${PROJECT_DIR}/${ws_path}" ]; then
     echo -e "⚠️ [:${port}] ${title} 디렉토리(${ws_path})가 아직 생성되지 않았습니다."
@@ -244,8 +305,12 @@ start_service() {
 
   if [ "$mode" = "prod" ]; then
     nohup env NODE_ENV=production HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$port" VITE_PORT="$port" npm run start > "$log_file" 2>&1 &
+    local new_pid=$!
+    echo "$new_pid" > "$pid_file"
   else
     nohup env NODE_ENV=development HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$port" VITE_PORT="$port" npm run dev > "$log_file" 2>&1 &
+    local new_pid=$!
+    echo "$new_pid" > "$pid_file"
   fi
 
   cd "${PROJECT_DIR}"
@@ -282,7 +347,7 @@ cmd_start() {
       ;;
     *)
       echo -e "${RED}잘못된 대상입니다: ${target}${NC}"
-      exit 1
+      safe_exit 1
       ;;
   esac
 }
@@ -325,7 +390,7 @@ SCRIPT_BASE=$(basename "$0")
 # compile.sh로 직접 호출된 경우 compile 모드로 자동 라우팅
 if [ "$SCRIPT_BASE" = "compile.sh" ]; then
   cmd_build "${MAIN_ARG:-all}"
-  exit $?
+  safe_exit $?
 fi
 
 case "$MAIN_ARG" in
@@ -366,6 +431,6 @@ case "$MAIN_ARG" in
   *)
     echo -e "${RED}알 수 없는 명령어: ${MAIN_ARG}${NC}"
     echo -e "사용법: ./run_port.sh [start|dev|build|stop|restart|status] [all|30015|30016|30017]"
-    exit 1
+    safe_exit 1
     ;;
 esac
