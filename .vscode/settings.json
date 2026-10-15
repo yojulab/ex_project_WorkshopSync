@@ -1,20 +1,8 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.preferences.includePackageJsonAutoImports": "auto",
-  "editor.formatOnSave": true,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
   "editor.tabSize": 2,
-  "files.autoSave": "onFocusChange",
-  "files.exclude": {
-    "**/.git": true,
-    "**/.DS_Store": true,
-    "**/node_modules": false,
-    "**/dist": false
-  },
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/dist": true,
-    "**/logs": true
-  },
-  "debug.javascript.autoAttachFilter": "disabled",
-  "debug.internalConsoleOptions": "openOnSessionStart"
+  "editor.formatOnSave": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true
 }

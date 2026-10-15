@@ -2,71 +2,97 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build-all",
+      "label": "build:all",
       "type": "shell",
       "command": "./compile.sh all",
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": ["$tsc"]
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
     },
     {
-      "label": "build-shared",
+      "label": "build:api",
       "type": "shell",
-      "command": "npm run build --workspace=@workshopsync/shared",
-      "problemMatcher": ["$tsc"]
+      "command": "npm run build",
+      "options": {
+        "cwd": "${workspaceFolder}/apps/api"
+      },
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
     },
     {
-      "label": "build-api",
+      "label": "build:mobile",
       "type": "shell",
-      "command": "npm run build --workspace=@workshopsync/shared && npm run build --workspace=workshopsync-api",
-      "group": "build",
-      "problemMatcher": ["$tsc"]
+      "command": "npm run build",
+      "options": {
+        "cwd": "${workspaceFolder}/apps/mobile"
+      },
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
     },
     {
-      "label": "build-mobile",
+      "label": "build:admin",
       "type": "shell",
-      "command": "npm run build --workspace=workshopsync-mobile",
-      "group": "build",
-      "problemMatcher": []
+      "command": "npm run build",
+      "options": {
+        "cwd": "${workspaceFolder}/apps/admin"
+      },
+      "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
     },
     {
-      "label": "build-admin",
-      "type": "shell",
-      "command": "npm run build --workspace=workshopsync-admin",
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
-      "label": "start-all-dev",
+      "label": "server:dev:all",
       "type": "shell",
       "command": "./run_port.sh dev all",
-      "problemMatcher": []
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
     },
     {
-      "label": "stop-all",
+      "label": "server:start:all",
+      "type": "shell",
+      "command": "./run_port.sh start all",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "server:stop:all",
       "type": "shell",
       "command": "./run_port.sh stop all",
-      "problemMatcher": []
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
     },
     {
-      "label": "status",
+      "label": "server:status",
       "type": "shell",
       "command": "./run_port.sh status",
-      "problemMatcher": []
-    },
-    {
-      "label": "start-frontend-servers",
-      "type": "shell",
-      "command": "./run_port.sh dev 30016 && ./run_port.sh dev 30017",
-      "problemMatcher": []
-    },
-    {
-      "label": "pre-launch-fullstack",
-      "dependsOn": ["build-api", "start-frontend-servers"],
-      "dependsOrder": "parallel",
-      "problemMatcher": []
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
     }
   ]
 }

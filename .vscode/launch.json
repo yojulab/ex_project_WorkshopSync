@@ -1,102 +1,80 @@
 {
   "version": "0.2.0",
-  "compounds": [
-    {
-      "name": "Full Stack",
-      "configurations": [
-        "API (Port 30015)",
-        "Mobile App Server (Port 30016)",
-        "Admin Web Server (Port 30017)"
-      ]
-    },
-    {
-      "name": "Frontend Both (Mobile + Admin)",
-      "configurations": [
-        "Mobile App Server (Port 30016)",
-        "Admin Web Server (Port 30017)"
-      ]
-    }
-  ],
   "configurations": [
     {
-      "name": "Full Stack (API Debug + Auto Frontends)",
+      "name": "API Server: Express (Port 30015)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/apps/api/dist/index.js",
-      "preLaunchTask": "pre-launch-fullstack",
       "cwd": "${workspaceFolder}/apps/api",
-      "sourceMaps": true,
-      "smartStep": true,
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "console": "integratedTerminal",
-      "serverReadyAction": {
-        "pattern": "WorkshopSync REST API 서버가 성공적으로 시작되었습니다",
-        "uriFormat": "http://localhost:30016",
-        "action": "openExternally"
-      },
-      "env": {
-        "NODE_ENV": "development",
-        "PORT": "30015",
-        "API_PORT": "30015"
-      },
-      "outFiles": [
-        "${workspaceFolder}/apps/api/dist/**/*.js",
-        "${workspaceFolder}/packages/shared/dist/**/*.js"
-      ]
+      "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "API (Port 30015)",
+      "name": "API Server: Node Debugger (Port 30015)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/apps/api/dist/index.js",
-      "preLaunchTask": "build-api",
       "cwd": "${workspaceFolder}/apps/api",
-      "sourceMaps": true,
-      "smartStep": true,
-      "console": "integratedTerminal",
-      "serverReadyAction": {
-        "pattern": "WorkshopSync REST API 서버가 성공적으로 시작되었습니다",
-        "uriFormat": "http://localhost:30016",
-        "action": "openExternally"
-      },
+      "program": "${workspaceFolder}/apps/api/dist/index.js",
+      "preLaunchTask": "build:api",
       "env": {
-        "NODE_ENV": "development",
         "PORT": "30015",
-        "API_PORT": "30015"
+        "NODE_ENV": "development"
       },
-      "outFiles": [
-        "${workspaceFolder}/apps/api/dist/**/*.js",
-        "${workspaceFolder}/packages/shared/dist/**/*.js"
-      ]
+      "sourceMaps": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "Mobile App Server (Port 30016)",
+      "name": "Mobile App: React PWA (Port 30016)",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/apps/mobile",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "Admin Web Server (Port 30017)",
+      "name": "Admin Portal: React Web (Port 30017)",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/apps/admin",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     },
     {
-      "name": "Attach to API (Port 9229)",
-      "type": "node",
+      "name": "Chrome: 참석자 전용 앱 (Port 30016)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:30016",
+      "webRoot": "${workspaceFolder}/apps/mobile"
+    },
+    {
+      "name": "Chrome: 관리자 웹 포털 (Port 30017)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:30017",
+      "webRoot": "${workspaceFolder}/apps/admin"
+    },
+    {
+      "name": "(선택) Chrome 디버거 연결 (Attach only - Port 9222)",
+      "type": "chrome",
       "request": "attach",
-      "port": 9229,
-      "restart": true,
-      "sourceMaps": true,
-      "cwd": "${workspaceFolder}/apps/api",
-      "outFiles": [
-        "${workspaceFolder}/apps/api/dist/**/*.js",
-        "${workspaceFolder}/packages/shared/dist/**/*.js"
+      "port": 9222,
+      "webRoot": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Fullstack: 3개 서버 동시 실행 (:30015, :30016, :30017)",
+      "configurations": [
+        "API Server: Express (Port 30015)",
+        "Mobile App: React PWA (Port 30016)",
+        "Admin Portal: React Web (Port 30017)"
       ]
     }
   ]
