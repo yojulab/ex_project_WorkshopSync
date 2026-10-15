@@ -55,6 +55,18 @@
       "type": "shell",
       "command": "./run_port.sh status",
       "problemMatcher": []
+    },
+    {
+      "label": "start-frontend-servers",
+      "type": "shell",
+      "command": "./run_port.sh dev 30016 && ./run_port.sh dev 30017",
+      "problemMatcher": []
+    },
+    {
+      "label": "pre-launch-fullstack",
+      "dependsOn": ["build-api", "start-frontend-servers"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
     }
   ]
 }
