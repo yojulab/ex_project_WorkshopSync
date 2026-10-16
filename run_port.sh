@@ -46,6 +46,11 @@ LOG_DIR="${PROJECT_DIR}/logs"
 TODAY=$(date +"%Y%m%d")
 mkdir -p "$LOG_DIR"
 
+# 기본 포트 및 환경변수(any port) 바인딩 지원
+API_PORT="${API_PORT:-30015}"
+MOBILE_PORT="${MOBILE_PORT:-${VITE_PORT:-30016}}"
+ADMIN_PORT="${ADMIN_PORT:-${VITE_ADMIN_PORT:-30017}}"
+
 # 터미널 색상 정의
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -134,9 +139,10 @@ get_port_pids() {
   # 3. 정밀 pgrep fallback (터미널 셸/에디터 등이 오폭되지 않도록 정밀 한정)
   if [ -z "$pids" ]; then
     case "$port" in
-      30015) pids=$(pgrep -f "node.*(30015|apps/api/dist)" 2>/dev/null || true) ;;
-      30016) pids=$(pgrep -f "vite.*(30016|apps/mobile)" 2>/dev/null || true) ;;
-      30017) pids=$(pgrep -f "vite.*(30017|apps/admin)" 2>/dev/null || true) ;;
+      "$API_PORT"|30015) pids=$(pgrep -f "node.*(${port}|apps/api/dist)" 2>/dev/null || true) ;;
+      "$MOBILE_PORT"|30016) pids=$(pgrep -f "vite.*(${port}|apps/mobile)" 2>/dev/null || true) ;;
+      "$ADMIN_PORT"|30017) pids=$(pgrep -f "vite.*(${port}|apps/admin)" 2>/dev/null || true) ;;
+      *) pids=$(pgrep -f "(node|vite).*${port}" 2>/dev/null || true) ;;
     esac
   fi
 
@@ -148,10 +154,10 @@ get_port_pids() {
 get_service_meta() {
   local port=$1
   case "$port" in
-    30015) echo "apps/api:REST API 서버 (Express):dist/index.js" ;;
-    30016) echo "apps/mobile:참석자 전용 앱 (React PWA):dist/index.html" ;;
-    30017) echo "apps/admin:관리자 웹 포털 (React Web):dist/index.html" ;;
-    *)     echo "unknown:알 수 없음:" ;;
+    "$API_PORT"|30015|api) echo "apps/api:REST API 서버 (Express):dist/index.js" ;;
+    "$MOBILE_PORT"|30016|mobile) echo "apps/mobile:참석자 전용 앱 (React PWA):dist/index.html" ;;
+    "$ADMIN_PORT"|30017|admin) echo "apps/admin:관리자 웹 포털 (React Web):dist/index.html" ;;
+    *) echo "apps/mobile:커스텀 서비스:dist/index.html" ;;
   esac
 }
 
@@ -202,17 +208,20 @@ cmd_build() {
   echo -e "${CYAN}=================================================================${NC}"
 
   case "$target" in
-    30015|api)    build_service 30015 ;;
-    30016|mobile) build_service 30016 ;;
-    30017|admin)  build_service 30017 ;;
+    "$API_PORT"|30015|api)    build_service "$API_PORT" ;;
+    "$MOBILE_PORT"|30016|mobile) build_service "$MOBILE_PORT" ;;
+    "$ADMIN_PORT"|30017|admin)  build_service "$ADMIN_PORT" ;;
     all)
-      build_service 30015
-      build_service 30016
-      build_service 30017
+      build_service "$API_PORT"
+      build_service "$MOBILE_PORT"
+      build_service "$ADMIN_PORT"
       echo -e "${GREEN}${BOLD}🎉 모든 서비스 컴파일 점검 완료!${NC}"
       ;;
+    [0-9]*)
+      build_service "$target"
+      ;;
     *)
-      echo -e "${RED}잘못된 대상입니다: ${target} (사용 가능: all, 30015, 30016, 30017)${NC}"
+      echo -e "${RED}잘못된 대상입니다: ${target} (사용 가능: all, ${API_PORT}, ${MOBILE_PORT}, ${ADMIN_PORT} 또는 임의 포트 번호)${NC}"
       safe_exit 1
       ;;
   esac
@@ -255,13 +264,16 @@ stop_service() {
 cmd_stop() {
   local target=${1:-all}
   case "$target" in
-    30015|api)    stop_service 30015 ;;
-    30016|mobile) stop_service 30016 ;;
-    30017|admin)  stop_service 30017 ;;
+    "$API_PORT"|30015|api)    stop_service "$API_PORT" ;;
+    "$MOBILE_PORT"|30016|mobile) stop_service "$MOBILE_PORT" ;;
+    "$ADMIN_PORT"|30017|admin)  stop_service "$ADMIN_PORT" ;;
     all)
-      stop_service 30015
-      stop_service 30016
-      stop_service 30017
+      stop_service "$API_PORT"
+      stop_service "$MOBILE_PORT"
+      stop_service "$ADMIN_PORT"
+      ;;
+    [0-9]*)
+      stop_service "$target"
       ;;
     *)
       echo -e "${RED}잘못된 대상입니다: ${target}${NC}"
@@ -304,11 +316,11 @@ start_service() {
   cd "${PROJECT_DIR}/${ws_path}"
 
   if [ "$mode" = "prod" ]; then
-    nohup env NODE_ENV=production HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$port" VITE_PORT="$port" npm run start > "$log_file" 2>&1 &
+    nohup env NODE_ENV=production HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$port" VITE_PORT="$port" npm run start -- --host 0.0.0.0 --port "$port" > "$log_file" 2>&1 &
     local new_pid=$!
     echo "$new_pid" > "$pid_file"
   else
-    nohup env NODE_ENV=development HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$port" VITE_PORT="$port" npm run dev > "$log_file" 2>&1 &
+    nohup env NODE_ENV=development HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$port" VITE_PORT="$port" npm run dev -- --host 0.0.0.0 --port "$port" > "$log_file" 2>&1 &
     local new_pid=$!
     echo "$new_pid" > "$pid_file"
   fi
@@ -337,13 +349,17 @@ cmd_start() {
   echo -e "${CYAN}=================================================================${NC}"
 
   case "$target" in
-    30015|api)    start_service 30015 "$mode" ;;
-    30016|mobile) start_service 30016 "$mode" ;;
-    30017|admin)  start_service 30017 "$mode" ;;
+    "$API_PORT"|30015|api)    start_service "$API_PORT" "$mode" ;;
+    "$MOBILE_PORT"|30016|mobile) start_service "$MOBILE_PORT" "$mode" ;;
+    "$ADMIN_PORT"|30017|admin)  start_service "$ADMIN_PORT" "$mode" ;;
     all)
-      start_service 30015 "$mode"
-      start_service 30016 "$mode"
-      start_service 30017 "$mode"
+      start_service "$API_PORT" "$mode"
+      start_service "$MOBILE_PORT" "$mode"
+      start_service "$ADMIN_PORT" "$mode"
+      ;;
+    [0-9]*)
+      echo -e "${YELLOW}ℹ [:${target}] 지정된 커스텀 포트로 기동합니다.${NC}"
+      start_service "$target" "$mode"
       ;;
     *)
       echo -e "${RED}잘못된 대상입니다: ${target}${NC}"
@@ -357,10 +373,10 @@ cmd_start() {
 # ------------------------------------------------------------------------------
 cmd_status() {
   echo -e "${CYAN}=================================================================${NC}"
-  echo -e "${CYAN} 🎯 WorkshopSync 통합 서비스 상태 점검 (Port 30015+)${NC}"
+  echo -e "${CYAN} 🎯 WorkshopSync 통합 서비스 상태 점검 (Any Port / Any Host 대응)${NC}"
   echo -e "${CYAN}=================================================================${NC}"
 
-  for port in 30015 30016 30017; do
+  for port in "$API_PORT" "$MOBILE_PORT" "$ADMIN_PORT"; do
     local meta
     meta=$(get_service_meta "$port")
     local title=$(echo "$meta" | cut -d: -f2)
@@ -374,10 +390,10 @@ cmd_status() {
     fi
   done
 
-  echo -e "\n🌐 표준 접속 URL 안내:"
-  echo -e "   - REST API 서버     : http://0.0.0.0:30015  (Base: /api/v1)"
-  echo -e "   - 참석자 전용 앱(PWA): http://0.0.0.0:30016  (Toss & Kakao UX)"
-  echo -e "   - 관리자 웹 포털    : http://0.0.0.0:30017  (Desktop Web)"
+  echo -e "\n🌐 표준 접속 URL 안내 (0.0.0.0 any port / any host 허용):"
+  echo -e "   - REST API 서버     : http://0.0.0.0:${API_PORT}  (Base: /api/v1)"
+  echo -e "   - 참석자 전용 앱(PWA): http://0.0.0.0:${MOBILE_PORT}  (Toss & Kakao UX)"
+  echo -e "   - 관리자 웹 포털    : http://0.0.0.0:${ADMIN_PORT}  (Desktop Web)"
   echo -e "${CYAN}=================================================================${NC}"
 }
 
@@ -414,7 +430,7 @@ case "$MAIN_ARG" in
   status)
     cmd_status
     ;;
-  30015|30016|30017|all)
+  "$API_PORT"|"$MOBILE_PORT"|"$ADMIN_PORT"|30015|30016|30017|api|mobile|admin|all|[0-9]*)
     cmd_start "prod" "$MAIN_ARG"
     ;;
   "")
@@ -426,11 +442,11 @@ case "$MAIN_ARG" in
     echo -e "   • ./run_port.sh stop all         (전체 프로세스 종료)"
     echo -e "   • ./run_port.sh restart all      (전체 재시작)"
     echo -e "   • ./run_port.sh status           (가동 상태 점검)"
-    echo -e "   ※ 대상 자리에 30015, 30016, 30017을 지정하여 개별 제어 가능\n"
+    echo -e "   ※ 대상 자리에 30015, 30016, 30017 또는 임의의 포트 번호를 지정하여 개별 제어 가능\n"
     ;;
   *)
     echo -e "${RED}알 수 없는 명령어: ${MAIN_ARG}${NC}"
-    echo -e "사용법: ./run_port.sh [start|dev|build|stop|restart|status] [all|30015|30016|30017]"
+    echo -e "사용법: ./run_port.sh [start|dev|build|stop|restart|status] [all|30015|30016|30017|임의포트]"
     safe_exit 1
     ;;
 esac

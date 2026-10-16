@@ -72,3 +72,4 @@
 | **2026-10-15** | WorkshopSync 도메인 가이드 및 10대 비즈니스 골든 룰 탑재 | `workshop-domain.md`, `workshop-terminology.md`, `plugin.json` | MongoDB 12대 스키마, 13대 화면(S-01~13), 관리자 9대 기능(A-01~09), 자기 조 투표 불가 등 10대 골든 룰 탑재 |
 | **2026-10-15** | 의뢰자 소통용 UI 일련번호 태깅 체계 WorkshopSync 규격화 | `ui-tagging-inspection.md`, `GEMINI.md`, `AGENTS.md` | S01~S13 모바일 화면 및 A01~A09 관리자 화면 식별자 체계 수립, `Alt+I` 단축키 및 4대 정보 원클릭 복사 유지 |
 | **2026-10-15** | 통합 포트 매니저 스크립트 30015+ 개편 | `run_port.sh`, `compile.sh`, `start_server.sh` 등 | 30015(API), 30016(Mobile), 30017(Admin) 개별/일괄 기동, 컴파일, 중지, 상태 점검 기능 지원 |
+| **2026-10-16** | 운영 모드 Any Port 및 전방위 CORS 접속 지원 체계 수립 | `run_port.sh`, `apps/*/vite.config.ts`, `apps/api`, `apps/admin` | 사용자 요청: 운영 환경에서 임의 포트 바인딩(`strictPort: false`, `process.env.PORT`), 외부 호스트 `0.0.0.0`, 전방위 CORS 허용(`*`) 반영 |

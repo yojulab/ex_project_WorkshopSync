@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+const PORT = Number(process.env.PORT || process.env.VITE_PORT || process.env.VITE_ADMIN_PORT || 30017);
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -10,13 +12,20 @@ export default defineConfig({
     }
   },
   server: {
-    port: 30017,
+    port: PORT,
     host: '0.0.0.0',
-    strictPort: true
+    strictPort: false,
+    cors: true
   },
   preview: {
-    port: 30017,
+    port: PORT,
     host: '0.0.0.0',
-    strictPort: true
+    strictPort: false,
+    cors: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*',
+      'Access-Control-Allow-Headers': '*'
+    }
   }
 });

@@ -123,7 +123,9 @@ export default function App() {
           <span style={{ fontSize: 24 }}>⚡</span>
           <div>
             <div className="sidebar-title">WorkshopSync</div>
-            <div style={{ fontSize: 11, color: '#6B7280' }}>관리자 웹 포털 :30017</div>
+            <div style={{ fontSize: 11, color: '#6B7280' }}>
+              관리자 웹 포털 {typeof window !== 'undefined' && window.location.port ? `:${window.location.port}` : ':30017'}
+            </div>
           </div>
         </div>
 
@@ -271,12 +273,16 @@ export default function App() {
                   </button>
                   <button
                     className="btn-outline"
-                    onClick={() => window.open('http://localhost:30016', '_blank')}
+                    onClick={() => {
+                      const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+                      const port = (import.meta as any).env?.VITE_MOBILE_PORT || '30016';
+                      window.open(`${window.location.protocol}//${host}:${port}`, '_blank');
+                    }}
                     title="참석자 전용 스마트폰 웹앱을 새 창으로 엽니다"
                     data-serial-id="A00-SEC01-BTN02"
                   >
                     <span className="ui-serial-badge" data-serial-id="A00-SEC01-BTN02" data-item-name="참석자 앱 열기 버튼">A00-SEC01-BTN02</span>
-                    📱 참석자 앱 열기 (30016)
+                    📱 참석자 앱 열기
                   </button>
                   <button
                     className="btn-primary"
