@@ -9,6 +9,7 @@ export interface Workshop {
   id: string;
   title: string;
   description: string;
+  category?: string;
   organizerCompany: string;
   location: string;
   locationDetail?: string;
@@ -22,6 +23,26 @@ export interface Workshop {
   resultsPublic: boolean;
   votingStatus: VotingStatus;
   createdAt: string;
+}
+
+export interface WorkshopStats {
+  workshopId: string;
+  totalParticipants: number;
+  checkedInCount: number;
+  checkinRate: number;
+  teamCount: number;
+  missionCount: number;
+  submissionCount: number;
+  votingCount: number;
+}
+
+export interface GlobalActivityLog {
+  id: string;
+  workshopId: string;
+  workshopTitle: string;
+  type: 'checkin' | 'submission' | 'vote' | 'notice' | 'status_change';
+  message: string;
+  timestamp: string;
 }
 
 export interface Agenda {
