@@ -15,13 +15,15 @@ export default defineConfig({
     port: PORT,
     host: '0.0.0.0',
     strictPort: false,
-    cors: true
+    cors: true,
+    allowedHosts: true
   },
   preview: {
     port: PORT,
     host: '0.0.0.0',
     strictPort: false,
     cors: true,
+    allowedHosts: true,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': '*',

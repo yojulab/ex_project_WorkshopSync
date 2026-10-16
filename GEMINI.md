@@ -75,4 +75,5 @@
 | **2026-10-16** | UI inspect 태그 뱃지 고도화 및 규격 통일 | `inspector.ts`, `admin/src/index.css`, `ui-tagging-inspection.md` | 용어 'UI inspect' 통일, 뱃지 사이즈 1단계 축소(9.5px), 관리자 좌측 메뉴 뱃지 위치 좌상단 일치화 |
 | **2026-10-16** | 운영 모드 Any Port 및 전방위 CORS 접속 지원 체계 수립 | `run_port.sh`, `apps/*/vite.config.ts`, `apps/api`, `apps/admin` | 사용자 요청: 운영 환경에서 임의 포트 바인딩(`strictPort: false`, `process.env.PORT`), 외부 호스트 `0.0.0.0`, 전방위 CORS 허용(`*`) 반영 |
 | **2026-10-16** | 빌드 파이프라인 @workshopsync/shared 사전 컴파일 및 source 호출 라우팅 강화 | `run_port.sh`, `compile.sh`, `packages/shared/package.json` | `. compile.sh` 실행 시 source 환경 인식 및 API 빌드 전 shared 패키지 자동 컴파일 연계 |
+| **2026-10-16** | Vite server/preview Any Host 및 외부 도메인 접근 허용 (`allowedHosts: true`) | `apps/mobile/vite.config.ts`, `apps/admin/vite.config.ts` | 외부 도메인/IP(예: `eighth.axfoundly.com` 등) 호스트 검증 차단 해제 및 Any Host 전면 허용 |
 
