@@ -118,7 +118,7 @@ function logActivity(wsId: string, wsTitle: string, type: GlobalActivityLog['typ
   return log;
 }
 
-const server = http.createServer(async (req, res) => {
+export async function handleApiRequest(req: http.IncomingMessage, res: http.ServerResponse, next?: () => void) {
   const hostHeader = (req.headers['x-forwarded-host'] as string) || req.headers.host || `${HOST}:${PORT}`;
   const protocol = (req.headers['x-forwarded-proto'] as string) || 'http';
   let parsedUrl: URL;
@@ -166,13 +166,23 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // If next is available and this is not an API path, let Vite serve static assets/HTML
+  const isApiRoute = pathname.startsWith('/api') || pathname.startsWith('/health');
+  const isRootJson = (pathname === '/' || pathname === '/index.html') &&
+                     (req.headers.accept?.includes('application/json') || query.get('format') === 'json');
+
+  if (!isApiRoute && !isRootJson && next) {
+    return next();
+  }
+
   try {
     // 0. Root / Welcome & Discovery API
-    if (pathname === '/' || pathname === '/api' || pathname === '/api/v1') {
+    if (pathname === '/' || pathname === '/api' || pathname === '/api/v1' || pathname === '/index.html') {
       return sendJson(res, 200, {
         success: true,
         service: 'WorkshopSync REST API',
         version: '1.0.0',
+        engine: 'Vite Node Server',
         status: 'online',
         host: hostHeader,
         protocol,
@@ -814,16 +824,26 @@ const server = http.createServer(async (req, res) => {
     }
 
     // Fallback 404
+    if (next) {
+      return next();
+    }
     sendJson(res, 404, { success: false, error: { code: 'NOT_FOUND', message: `경로를 찾을 수 없습니다: ${pathname}` } });
   } catch (err: any) {
     sendJson(res, 500, { success: false, error: { code: 'INTERNAL_ERROR', message: err.message || '서버 오류' } });
   }
+}
+
+export const server = http.createServer((req, res) => {
+  handleApiRequest(req, res);
 });
 
-server.listen(Number(PORT), HOST, () => {
-  console.log(`🚀 [Port: ${PORT}] WorkshopSync REST API 서버가 성공적으로 시작되었습니다. (Host: ${HOST})`);
-  console.log(`   - Base URL: http://${HOST}:${PORT}/api/v1`);
-  console.log(`   - Any IP / Any Host / 전방위 CORS & PNA 허용됨`);
-  console.log(`   - Multi-Workshops: ${workshopsState.length}개 워크샵 로드됨`);
-  console.log(`   - SSE Stream: http://${HOST}:${PORT}/api/v1/workshops/${mockWorkshops[0]?.id || 'ws-01'}/stream`);
-});
+// Standalone 실행 시 자동 listen (기본은 Vite dev/preview에서 관리)
+if (process.env.STANDALONE === 'true') {
+  server.listen(Number(PORT), HOST, () => {
+    console.log(`🚀 [Port: ${PORT}] WorkshopSync REST API 서버가 독립 기동되었습니다. (Host: ${HOST})`);
+    console.log(`   - Base URL: http://${HOST}:${PORT}/api/v1`);
+    console.log(`   - Any IP / Any Host / 전방위 CORS & PNA 허용됨`);
+    console.log(`   - Multi-Workshops: ${workshopsState.length}개 워크샵 로드됨`);
+    console.log(`   - SSE Stream: http://${HOST}:${PORT}/api/v1/workshops/${mockWorkshops[0]?.id || 'ws-01'}/stream`);
+  });
+}

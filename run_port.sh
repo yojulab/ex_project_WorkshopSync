@@ -139,7 +139,7 @@ get_port_pids() {
   # 3. 정밀 pgrep fallback (터미널 셸/에디터 등이 오폭되지 않도록 정밀 한정)
   if [ -z "$pids" ]; then
     case "$port" in
-      "$API_PORT"|30015) pids=$(pgrep -f "node.*(${port}|apps/api/dist)" 2>/dev/null || true) ;;
+      "$API_PORT"|30015) pids=$(pgrep -f "(node|vite).*(${port}|apps/api)" 2>/dev/null || true) ;;
       "$MOBILE_PORT"|30016) pids=$(pgrep -f "vite.*(${port}|apps/mobile)" 2>/dev/null || true) ;;
       "$ADMIN_PORT"|30017) pids=$(pgrep -f "vite.*(${port}|apps/admin)" 2>/dev/null || true) ;;
       *) pids=$(pgrep -f "(node|vite).*${port}" 2>/dev/null || true) ;;
@@ -154,7 +154,7 @@ get_port_pids() {
 get_service_meta() {
   local port=$1
   case "$port" in
-    "$API_PORT"|30015|api) echo "apps/api:REST API 서버 (Express):dist/index.js" ;;
+    "$API_PORT"|30015|api) echo "apps/api:REST API 서버 (Vite/Node):dist/index.html" ;;
     "$MOBILE_PORT"|30016|mobile) echo "apps/mobile:참석자 전용 앱 (React PWA):dist/index.html" ;;
     "$ADMIN_PORT"|30017|admin) echo "apps/admin:관리자 웹 포털 (React Web):dist/index.html" ;;
     *) echo "apps/mobile:커스텀 서비스:dist/index.html" ;;

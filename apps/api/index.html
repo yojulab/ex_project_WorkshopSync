@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WorkshopSync REST API Console (Port 30015)</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+    <style>
+      :root {
+        --bg-color: #0d1117;
+        --card-bg: #161b22;
+        --border-color: #30363d;
+        --text-main: #f0f6fc;
+        --text-sub: #8b949e;
+        --primary: #58a6ff;
+        --success: #3fb950;
+        --warning: #d29922;
+        --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        min-height: 100vh;
+        padding: 32px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .container {
+        max-width: 960px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        position: relative;
+      }
+      header {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .title-group h1 {
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge-online {
+        background: rgba(63, 185, 80, 0.15);
+        color: var(--success);
+        border: 1px solid rgba(63, 185, 80, 0.4);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .badge-online::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background-color: var(--success);
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 8px var(--success);
+      }
+      .nav-links {
+        display: flex;
+        gap: 12px;
+      }
+      .nav-btn {
+        background: #21262d;
+        color: var(--primary);
+        border: 1px solid var(--border-color);
+        padding: 8px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+      .nav-btn:hover {
+        background: #30363d;
+        border-color: var(--primary);
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+      }
+      .stat-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 18px 20px;
+      }
+      .stat-card .label {
+        font-size: 12px;
+        color: var(--text-sub);
+        font-weight: 500;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .stat-card .value {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+      .section-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 24px;
+      }
+      .section-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .endpoint-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .endpoint-row {
+        background: #0d1117;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        font-family: var(--font-mono);
+        font-size: 13px;
+      }
+      .method-badge {
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 11px;
+      }
+      .method-get { background: rgba(88, 166, 255, 0.15); color: var(--primary); }
+      .method-sse { background: rgba(210, 153, 34, 0.15); color: var(--warning); }
+      .endpoint-path {
+        flex: 1;
+        color: #e6edf3;
+      }
+      .test-btn {
+        background: #238636;
+        color: #fff;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: opacity 0.2s;
+      }
+      .test-btn:hover { opacity: 0.9; }
+      pre.result-box {
+        background: #000;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 16px;
+        color: #7ee787;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        overflow-x: auto;
+        max-height: 280px;
+        margin-top: 16px;
+      }
+      /* UI inspect 뱃지 스타일 */
+      .ui-inspect-badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: #2563eb;
+        color: #fff;
+        font-size: 9.5px;
+        font-family: monospace;
+        padding: 2px 5px;
+        border-radius: 4px;
+        cursor: pointer;
+        z-index: 1000;
+        opacity: 0.85;
+      }
+      .ui-inspect-badge:hover { opacity: 1; transform: scale(1.05); }
+      .copy-toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        display: none;
+        z-index: 2000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header data-inspect="[A00-API-HEADER01]">
+        <div class="title-group">
+          <h1>WorkshopSync REST API Console</h1>
+          <span class="badge-online">ONLINE :30015</span>
+        </div>
+        <div class="nav-links">
+          <a class="nav-btn" href="http://localhost:30016" target="_blank" data-inspect="[A00-API-NAV01]">📱 참석자 앱 (30016)</a>
+          <a class="nav-btn" href="http://localhost:30017" target="_blank" data-inspect="[A00-API-NAV02]">💻 관리자 웹 (30017)</a>
+        </div>
+      </header>
+
+      <div class="stats-grid">
+        <div class="stat-card" data-inspect="[A00-API-STAT01]">
+          <div class="label">Architecture Mode</div>
+          <div class="value" style="color: var(--primary);">Vite Config Engine</div>
+        </div>
+        <div class="stat-card" data-inspect="[A00-API-STAT02]">
+          <div class="label">Access Control</div>
+          <div class="value" style="color: var(--success); font-size: 18px;">Any Host & CORS PNA</div>
+        </div>
+        <div class="stat-card" data-inspect="[A00-API-STAT03]">
+          <div class="label">Host Header</div>
+          <div class="value" id="currentHost" style="font-size: 17px; word-break: break-all;">-</div>
+        </div>
+        <div class="stat-card" data-inspect="[A00-API-STAT04]">
+          <div class="label">Active Port</div>
+          <div class="value">30015</div>
+        </div>
+      </div>
+
+      <div class="section-card" data-inspect="[A00-API-ENDPOINTS01]">
+        <div class="section-title">
+          <span>🚀 주요 REST API 엔드포인트 실시간 테스터</span>
+          <span style="font-size: 12px; color: var(--text-sub);">Alt+I 단축키로 UI inspect 토글</span>
+        </div>
+        <div class="endpoint-list">
+          <div class="endpoint-row">
+            <span class="method-badge method-get">GET</span>
+            <span class="endpoint-path">/api/v1/health</span>
+            <button class="test-btn" onclick="testEndpoint('/api/v1/health')">호출 (Test)</button>
+          </div>
+          <div class="endpoint-row">
+            <span class="method-badge method-get">GET</span>
+            <span class="endpoint-path">/api/v1/admin/overview</span>
+            <button class="test-btn" onclick="testEndpoint('/api/v1/admin/overview')">호출 (Test)</button>
+          </div>
+          <div class="endpoint-row">
+            <span class="method-badge method-get">GET</span>
+            <span class="endpoint-path">/api/v1/workshops</span>
+            <button class="test-btn" onclick="testEndpoint('/api/v1/workshops')">호출 (Test)</button>
+          </div>
+          <div class="endpoint-row">
+            <span class="method-badge method-sse">SSE</span>
+            <span class="endpoint-path">/api/v1/workshops/ws-2026-ai/stream</span>
+            <button class="test-btn" style="background: #9a6700;" onclick="connectSSE()">스트림 연결</button>
+          </div>
+        </div>
+
+        <pre class="result-box" id="resultBox">// 실행 결과가 여기에 실시간으로 표시됩니다. 위 [호출] 버튼을 클릭해보세요.</pre>
+      </div>
+    </div>
+
+    <div class="copy-toast" id="copyToast">[Copied! ✓] 4대 정보가 클립보드에 복사되었습니다.</div>
+
+    <script>
+      document.getElementById('currentHost').innerText = window.location.host;
+
+      async function testEndpoint(path) {
+        const box = document.getElementById('resultBox');
+        box.innerText = `[${new Date().toLocaleTimeString()}] Fetching: ${path}...`;
+        try {
+          const res = await fetch(path);
+          const data = await res.json();
+          box.innerText = `// HTTP ${res.status} OK\n` + JSON.stringify(data, null, 2);
+        } catch (err) {
+          box.innerText = `// Error: ` + err.message;
+        }
+      }
+
+      let eventSource = null;
+      function connectSSE() {
+        const box = document.getElementById('resultBox');
+        if (eventSource) {
+          eventSource.close();
+          eventSource = null;
+          box.innerText += `\n[${new Date().toLocaleTimeString()}] SSE 스트림 연결이 해제되었습니다.`;
+          return;
+        }
+        box.innerText = `[${new Date().toLocaleTimeString()}] SSE 스트림 연결 중 (/api/v1/workshops/ws-2026-ai/stream)...`;
+        eventSource = new EventSource('/api/v1/workshops/ws-2026-ai/stream');
+        eventSource.onopen = () => {
+          box.innerText += `\n[${new Date().toLocaleTimeString()}] ✓ SSE 스트림 연결 성공 (Listening...)`;
+        };
+        eventSource.onmessage = (e) => {
+          box.innerText += `\n[${new Date().toLocaleTimeString()}] Event received:\n` + e.data;
+        };
+        eventSource.onerror = (e) => {
+          box.innerText += `\n[${new Date().toLocaleTimeString()}] SSE 연결 종료 또는 에러`;
+        };
+      }
+
+      // Alt+I 단축키 토글 & UI inspect 뱃지 복사
+      let inspectVisible = false;
+      function toggleInspect() {
+        inspectVisible = !inspectVisible;
+        document.querySelectorAll('.ui-inspect-badge').forEach(b => b.style.display = inspectVisible ? 'block' : 'none');
+      }
+
+      window.addEventListener('keydown', (e) => {
+        if (e.altKey && (e.key === 'i' || e.key === 'I')) {
+          e.preventDefault();
+          toggleInspect();
+        }
+      });
+
+      function initInspectBadges() {
+        document.querySelectorAll('[data-inspect]').forEach(el => {
+          const code = el.getAttribute('data-inspect');
+          const badge = document.createElement('span');
+          badge.className = 'ui-inspect-badge';
+          badge.innerText = code;
+          badge.style.display = inspectVisible ? 'block' : 'none';
+          badge.onclick = (e) => {
+            e.stopPropagation();
+            const textToCopy = `${code} WorkshopSync API Console (URI: ${window.location.pathname}, 항목: ${el.innerText.slice(0, 20)})`;
+            navigator.clipboard.writeText(textToCopy);
+            const toast = document.getElementById('copyToast');
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 1800);
+          };
+          el.style.position = 'relative';
+          el.appendChild(badge);
+        });
+      }
+      initInspectBadges();
+    </script>
+  </body>
+</html>

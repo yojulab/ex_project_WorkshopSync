@@ -1,17 +1,20 @@
 {
   "name": "workshopsync-api",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "private": true,
+  "main": "dist/index.html",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "node dist/index.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite preview"
   },
   "dependencies": {
     "@workshopsync/shared": "*"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
   }
 }

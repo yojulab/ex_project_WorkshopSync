@@ -77,4 +77,5 @@
 | **2026-10-16** | 빌드 파이프라인 @workshopsync/shared 사전 컴파일 및 source 호출 라우팅 강화 | `run_port.sh`, `compile.sh`, `packages/shared/package.json` | `. compile.sh` 실행 시 source 환경 인식 및 API 빌드 전 shared 패키지 자동 컴파일 연계 |
 | **2026-10-16** | Vite server/preview Any Host 및 외부 도메인 접근 허용 (`allowedHosts: true`) | `apps/mobile/vite.config.ts`, `apps/admin/vite.config.ts` | 외부 도메인/IP(예: `eighth.axfoundly.com` 등) 호스트 검증 차단 해제 및 Any Host 전면 허용 |
 | **2026-10-16** | API Any Host & PNA CORS 적용, 프론트엔드 /api 프록시 연계 및 개발/운영 README.md 작성 | `apps/api`, `apps/mobile`, `apps/admin`, `run_port.sh`, `README.md` | 사용자 요청: API 전방위 Any Host/PNA 허용, Vite /api 프록시 연계, 개발 및 운영 종합 지침 README.md 수립 |
+| **2026-10-16** | apps/api 전면 Vite Config 관리 체계 전환 (`vite.config.ts`) | `apps/api/vite.config.ts`, `apps/api/index.html`, `apps/api/package.json`, `run_port.sh` | 사용자 요청: API 서버를 3대 서비스 표준과 동일하게 `vite.config.ts`, `vite build`, `vite preview` 체계로 전면 전환 및 실시간 API 대시보드 탑재 |
 

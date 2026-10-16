@@ -25,7 +25,7 @@ WorkshopSync는 **포트 30015부터 시작하는 3대 독립 서비스 규격**
 
 | 포트 | 서비스명 | 디렉토리 | 기술 스택 | 설명 |
 | :--- | :--- | :--- | :--- | :--- |
-| **`30015`** | **REST API 서버** | `apps/api` | Node.js, Express, TypeScript, SSE | 비즈니스 로직, 데이터 영속화, 실시간 SSE 스트림 브로드캐스트 |
+| **`30015`** | **REST API 서버** | `apps/api` | Vite 5, Node.js, TypeScript, SSE | Vite Config(`vite.config.ts`) 기반 API 엔진, Any Host/PNA, 실시간 SSE 및 웹 콘솔 대시보드 |
 | **`30016`** | **참석자 전용 앱** | `apps/mobile` | React 18, Vite, PWA, CSS Modules | 토스풍 UX(여백/큰글씨/CTA) + 카카오톡식 5대 하단 탭, max-width 480px |
 | **`30017`** | **관리자 웹 포털** | `apps/admin` | React 18, Vite, Desktop Web | 워크샵 마스터 CRUD, 참석자/조 편성, 미션/투표/시상 원스크린 관제 |
 | `-` | **공통 라이브러리** | `packages/shared` | TypeScript | 도메인 모델(12대 스키마), 공통 상수, 유효성 검증 규칙, Mock 시드 데이터 |
@@ -37,8 +37,8 @@ WorkshopSync는 **포트 30015부터 시작하는 3대 독립 서비스 규격**
 운영 및 개발 시 사내 프라이빗 IP, 클라우드 호스트, 도메인 역방향 프록시(`eighth.axfoundly.com`, Cloudflare, Nginx 등) 환경에서 차단 없이 접속할 수 있도록 전방위 Any Host/IP 체계가 적용되어 있습니다.
 
 ### 주요 반영 사항
-1. **Vite 5.4.12+ Host Header 차단 해제**:
-   - `apps/mobile/vite.config.ts` 및 `apps/admin/vite.config.ts`의 `server.allowedHosts: true`, `preview.allowedHosts: true` 적용
+1. **3대 서비스 전면 Vite Config 관리 체계 통일 (`allowedHosts: true`)**:
+   - `apps/api/vite.config.ts`, `apps/mobile/vite.config.ts`, `apps/admin/vite.config.ts` 3대 서비스 모두에 `server.allowedHosts: true`, `preview.allowedHosts: true` 일괄 적용
    - `Blocked request. This host ("...") is not allowed` 오류를 원천 차단하고 임의 도메인/IP 접속 허용
 2. **0.0.0.0 바인딩 및 전방위 CORS / PNA 지원**:
    - API 및 Vite 웹 서버 모두 `0.0.0.0` 인터페이스 바인딩
@@ -194,8 +194,10 @@ WorkshopSync의 모든 모듈과 API는 아래 10대 비즈니스 골든 룰을 
 ```text
 ex_project_WorkshopSync/
 ├── apps/
-│   ├── api/                      # [Port 30015] REST API & SSE 스트리밍 서버
-│   │   ├── src/index.ts          # API 엔드포인트 및 인메모리/MongoDB 라우터
+│   ├── api/                      # [Port 30015] REST API & SSE 스트리밍 서버 (Vite 관리)
+│   │   ├── src/index.ts          # handleApiRequest 및 인메모리/MongoDB 라우터
+│   │   ├── vite.config.ts        # Vite API 서버 설정 (allowedHosts, CORS, 미들웨어)
+│   │   ├── index.html            # 실시간 API 콘솔 및 엔드포인트 테스터 대시보드
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   ├── mobile/                   # [Port 30016] 참석자 전용 PWA 앱
