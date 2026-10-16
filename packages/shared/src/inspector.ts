@@ -1,5 +1,5 @@
-// UI Tagging & Inspection System for WorkshopSync
-// 의뢰자 소통용 UI 일련번호 태깅 & 4대 정보 원클릭 복사 엔진
+// UI inspect System for WorkshopSync
+// 의뢰자 소통용 UI inspect 일련번호 태깅 & 4대 정보 원클릭 복사 엔진
 
 export function initUiInspector() {
   if (typeof window === 'undefined') return;
@@ -12,18 +12,18 @@ export function initUiInspector() {
       .ui-serial-badge {
         display: none;
         position: absolute;
-        top: -10px;
-        left: -4px;
+        top: -8px;
+        left: -2px;
         z-index: 99999;
         background: linear-gradient(135deg, #3182F6 0%, #6366F1 100%);
         color: #ffffff;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-        font-size: 11px;
+        font-size: 9.5px;
         font-weight: 700;
         line-height: 1;
-        padding: 4px 7px;
-        border-radius: 6px;
-        box-shadow: 0 4px 12px rgba(49, 130, 246, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.2);
+        padding: 2.5px 5.5px;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(49, 130, 246, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2);
         cursor: pointer;
         pointer-events: auto;
         user-select: none;
@@ -109,7 +109,7 @@ export function initUiInspector() {
     document.body.classList.toggle('ui-inspect-active', isInspectMode);
     const fabText = document.getElementById('ui-inspector-fab-text');
     if (fabText) {
-      fabText.innerText = isInspectMode ? '태그 ON (Alt+I)' : 'UI 태그 (Alt+I)';
+      fabText.innerText = isInspectMode ? 'UI inspect ON (Alt+I)' : 'UI inspect (Alt+I)';
     }
   }
 
@@ -119,7 +119,7 @@ export function initUiInspector() {
       e.preventDefault();
       isInspectMode = !isInspectMode;
       updateState();
-      showToast(isInspectMode ? '🔍 UI 일련번호 뱃지 활성화 (클릭 시 4대 정보 복사)' : 'UI 일련번호 뱃지 숨김');
+      showToast(isInspectMode ? '🔍 UI inspect 활성화 (클릭 시 4대 정보 복사)' : 'UI inspect 비활성화 (숨김)');
     }
   });
 
@@ -128,14 +128,14 @@ export function initUiInspector() {
     const fab = document.createElement('button');
     fab.id = 'ui-inspector-fab';
     fab.setAttribute('type', 'button');
-    fab.setAttribute('title', '단축키 Alt+I 로도 켜고 끌 수 있습니다');
-    fab.innerHTML = `<span>🏷️</span><span id="ui-inspector-fab-text">${isInspectMode ? '태그 ON (Alt+I)' : 'UI 태그 (Alt+I)'}</span>`;
+    fab.setAttribute('title', '단축키 Alt+I 로 UI inspect 모드를 켜고 끌 수 있습니다');
+    fab.innerHTML = `<span>🏷️</span><span id="ui-inspector-fab-text">${isInspectMode ? 'UI inspect ON (Alt+I)' : 'UI inspect (Alt+I)'}</span>`;
     fab.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       isInspectMode = !isInspectMode;
       updateState();
-      showToast(isInspectMode ? '🔍 UI 일련번호 뱃지 활성화 (클릭 시 4대 정보 복사)' : 'UI 일련번호 뱃지 숨김');
+      showToast(isInspectMode ? '🔍 UI inspect 활성화 (클릭 시 4대 정보 복사)' : 'UI inspect 비활성화 (숨김)');
     });
     document.body.appendChild(fab);
   }

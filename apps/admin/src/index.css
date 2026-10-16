@@ -88,17 +88,16 @@ body {
   transition: all 0.15s;
 }
 
-/* Sidebar Item UI Tag Badge - 우측 끝에 안정적으로 부착 */
+/* Sidebar Item UI Tag Badge - 다른 뱃지 위치와 일치 (좌상단 핀 고정) */
 .sidebar-item .ui-serial-badge {
-  top: 50% !important;
-  right: 10px !important;
-  left: auto !important;
-  transform: translateY(-50%) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  top: -6px !important;
+  left: 8px !important;
+  right: auto !important;
+  transform: none !important;
 }
 
 .sidebar-item .ui-serial-badge:hover {
-  transform: translateY(-50%) scale(1.08) !important;
+  transform: scale(1.12) !important;
 }
 
 .sidebar-item:hover {

@@ -14,7 +14,7 @@
 | **"하네스 구성해줘"**, **"하네스 설계"**, **"에이전트 팀 만들어줘"** | [.agents/skills/harness/SKILL.md](file:///apps/ex_project_WorkshopSync/.agents/skills/harness/SKILL.md) | 프로젝트 도메인 분석 후 최적의 에이전트 팀과 스킬 설계 |
 | **"하네스 회고"**, **"하네스 피드백 반영"**, **"하네스 진화"** | [.agents/skills/harness-evolve/SKILL.md](file:///apps/ex_project_WorkshopSync/.agents/skills/harness-evolve/SKILL.md) | 실행 델타 포착, 원리 일반화, 룰 및 에이전트 지속 개선 |
 | **"루프 실행"**, **"ralph loop"**, **"끝날 때까지 반복"**, **"자율 루프"** | [.agents/skills/ralph-loop/SKILL.md](file:///apps/ex_project_WorkshopSync/.agents/skills/ralph-loop/SKILL.md) | Ralph Loop 자율 반복 실행, 완료 약속 및 서킷 브레이커 관리 |
-| **UI 일련번호 태깅 & 단축키 인스펙션** | [.agents/rules/ui-tagging-inspection.md](file:///apps/ex_project_WorkshopSync/.agents/rules/ui-tagging-inspection.md) | 화면/태그 일련번호 체계, `Alt+I` 단축키 토글, 뱃지 클릭 시 4대 정보 복사 |
+| **UI 일련번호 태깅 & UI inspect 뱃지** | [.agents/rules/ui-tagging-inspection.md](file:///apps/ex_project_WorkshopSync/.agents/rules/ui-tagging-inspection.md) | 화면/태그 일련번호 체계, `Alt+I` 단축키 토글, 뱃지 클릭 시 4대 정보 복사 |
 | **워크샵 도메인 용어 & 10대 골든 룰** | [.agents/rules/workshop-terminology.md](file:///apps/ex_project_WorkshopSync/.agents/rules/workshop-terminology.md) | 워크샵 도메인 전문 용어, 자기 조 투표 금지, 블라인드 득표, 마감 엄격 차단 등 10대 수칙 |
 | **WorkshopSync 도메인 & PRD 규격** | [.agents/rules/workshop-domain.md](file:///apps/ex_project_WorkshopSync/.agents/rules/workshop-domain.md) | MongoDB 12대 스키마, 13대 화면(S-01~13), 관리자 9대 기능(A-01~09), 포트 30015+ 스펙 |
 | **Git 커밋 규약 & 업무 종료 수칙** | [.agents/rules/git-workflow.md](file:///apps/ex_project_WorkshopSync/.agents/rules/git-workflow.md) | 업무 종료 시 Git Commit 필수화, 원자적 커밋, 메시지 컨벤션 |
@@ -72,3 +72,4 @@
 | **2026-10-15** | WorkshopSync 도메인 가이드 및 10대 비즈니스 골든 룰 탑재 | `workshop-domain.md`, `workshop-terminology.md`, `plugin.json` | MongoDB 12대 스키마, 13대 화면(S-01~13), 관리자 9대 기능(A-01~09), 자기 조 투표 불가 등 10대 골든 룰 탑재 |
 | **2026-10-15** | 의뢰자 소통용 UI 일련번호 태깅 체계 WorkshopSync 규격화 | `ui-tagging-inspection.md`, `GEMINI.md`, `AGENTS.md` | S01~S13 모바일 화면 및 A01~A09 관리자 화면 식별자 체계 수립, `Alt+I` 단축키 및 4대 정보 원클릭 복사 유지 |
 | **2026-10-15** | 통합 포트 매니저 스크립트 30015+ 개편 | `run_port.sh`, `compile.sh`, `start_server.sh` 등 | 30015(API), 30016(Mobile), 30017(Admin) 개별/일괄 기동, 컴파일, 중지, 상태 점검 기능 지원 |
+| **2026-10-16** | UI inspect 태그 뱃지 고도화 및 규격 통일 | `inspector.ts`, `admin/src/index.css`, `ui-tagging-inspection.md` | 용어 'UI inspect' 통일, 뱃지 사이즈 1단계 축소(9.5px), 관리자 좌측 메뉴 뱃지 위치 좌상단 일치화 |
