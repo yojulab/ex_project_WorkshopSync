@@ -63,7 +63,7 @@ NC='\033[0m'
 ensure_bin_links() {
   local root_bin="${PROJECT_DIR}/node_modules/.bin"
   if [ -d "$root_bin" ]; then
-    for sub in apps/mobile apps/admin apps/api; do
+    for sub in apps/mobile apps/admin apps/api packages/shared; do
       if [ -d "${PROJECT_DIR}/${sub}" ]; then
         mkdir -p "${PROJECT_DIR}/${sub}/node_modules"
         if [ ! -e "${PROJECT_DIR}/${sub}/node_modules/.bin" ]; then
@@ -165,11 +165,33 @@ get_service_meta() {
 # 1. 컴파일 (Build / Compile)
 # ------------------------------------------------------------------------------
 ensure_build_deps() {
-  local root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  if [ -f "$root/package.json" ] && [ ! -d "$root/node_modules" ]; then
+  if [ -f "${PROJECT_DIR}/package.json" ] && [ ! -d "${PROJECT_DIR}/node_modules" ]; then
     echo -e "${YELLOW}⚠ 의존성 모듈 미설치 감지 → npm install 진행...${NC}"
-    (cd "$root" && npm install) || return 1
+    (cd "${PROJECT_DIR}" && npm install) || return 1
+    ensure_bin_links
   fi
+}
+
+_SHARED_BUILT=0
+
+build_shared() {
+  if [ "$_SHARED_BUILT" -eq 1 ]; then
+    return 0
+  fi
+  local shared_dir="${PROJECT_DIR}/packages/shared"
+  if [ -d "$shared_dir" ] && [ -f "$shared_dir/package.json" ]; then
+    ensure_build_deps || return 1
+    echo -e "🔨 [공통 라이브러리] ${BOLD}@workshopsync/shared${NC} 컴파일 시작..."
+    if (cd "$shared_dir" && npm run build); then
+      echo -e "   ${GREEN}✓ [공통 라이브러리] 컴파일 완료${NC}\n"
+      _SHARED_BUILT=1
+      return 0
+    else
+      echo -e "   ${RED}✗ [공통 라이브러리] 컴파일 실패!${NC}\n"
+      return 1
+    fi
+  fi
+  return 0
 }
 
 build_service() {
@@ -185,6 +207,7 @@ build_service() {
   fi
 
   ensure_build_deps || { echo -e "   ${RED}✗ 의존성 점검 실패${NC}"; return 1; }
+  build_shared || { echo -e "   ${RED}✗ 공통 라이브러리 사전 빌드 실패${NC}"; return 1; }
   echo -e "🔨 [:${port}] ${BOLD}${title}${NC} 컴파일 시작..."
 
   if [ -f "${PROJECT_DIR}/${ws_path}/package.json" ]; then
@@ -208,10 +231,14 @@ cmd_build() {
   echo -e "${CYAN}=================================================================${NC}"
 
   case "$target" in
+    shared)
+      build_shared
+      ;;
     "$API_PORT"|30015|api)    build_service "$API_PORT" ;;
     "$MOBILE_PORT"|30016|mobile) build_service "$MOBILE_PORT" ;;
     "$ADMIN_PORT"|30017|admin)  build_service "$ADMIN_PORT" ;;
     all)
+      build_shared
       build_service "$API_PORT"
       build_service "$MOBILE_PORT"
       build_service "$ADMIN_PORT"
@@ -221,7 +248,7 @@ cmd_build() {
       build_service "$target"
       ;;
     *)
-      echo -e "${RED}잘못된 대상입니다: ${target} (사용 가능: all, ${API_PORT}, ${MOBILE_PORT}, ${ADMIN_PORT} 또는 임의 포트 번호)${NC}"
+      echo -e "${RED}잘못된 대상입니다: ${target} (사용 가능: all, shared, ${API_PORT}, ${MOBILE_PORT}, ${ADMIN_PORT} 또는 임의 포트 번호)${NC}"
       safe_exit 1
       ;;
   esac
@@ -401,12 +428,17 @@ cmd_status() {
 # 메인 CLI 라우팅
 # ------------------------------------------------------------------------------
 MAIN_ARG="${1:-}"
-SCRIPT_BASE=$(basename "$0")
+SCRIPT_BASE=$(basename "${BASH_SOURCE[0]:-$0}")
 
-# compile.sh로 직접 호출된 경우 compile 모드로 자동 라우팅
+# compile.sh로 직접 호출되거나 source(.)로 호출된 경우 compile 모드로 자동 라우팅
 if [ "$SCRIPT_BASE" = "compile.sh" ]; then
   cmd_build "${MAIN_ARG:-all}"
-  safe_exit $?
+  _RET=$?
+  if [ "$_RUN_PORT_SOURCED" -eq 1 ]; then
+    return "$_RET" 2>/dev/null || true
+  else
+    exit "$_RET"
+  fi
 fi
 
 case "$MAIN_ARG" in
