@@ -342,12 +342,13 @@ start_service() {
   echo -e "🚀 [:${port}] ${BOLD}${title}${NC} 기동 중 (${mode} 모드)..."
   cd "${PROJECT_DIR}/${ws_path}"
 
+  local actual_api_port="${API_PORT:-30015}"
   if [ "$mode" = "prod" ]; then
-    nohup env NODE_ENV=production HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$port" VITE_PORT="$port" npm run start -- --host 0.0.0.0 --port "$port" > "$log_file" 2>&1 &
+    nohup env NODE_ENV=production HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$actual_api_port" VITE_PORT="$port" npm run start -- --host 0.0.0.0 --port "$port" > "$log_file" 2>&1 &
     local new_pid=$!
     echo "$new_pid" > "$pid_file"
   else
-    nohup env NODE_ENV=development HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$port" VITE_PORT="$port" npm run dev -- --host 0.0.0.0 --port "$port" > "$log_file" 2>&1 &
+    nohup env NODE_ENV=development HOSTNAME="0.0.0.0" PORT="$port" API_PORT="$actual_api_port" VITE_PORT="$port" npm run dev -- --host 0.0.0.0 --port "$port" > "$log_file" 2>&1 &
     local new_pid=$!
     echo "$new_pid" > "$pid_file"
   fi

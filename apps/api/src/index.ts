@@ -22,6 +22,7 @@ import {
 } from '@workshopsync/shared';
 
 const PORT = process.env.PORT || process.env.API_PORT || 30015;
+const HOST = process.env.HOST || '0.0.0.0';
 
 // In-Memory Realtime State Store
 let workshopsState: Workshop[] = [...mockWorkshops];
@@ -72,6 +73,7 @@ function sendJson(res: http.ServerResponse, statusCode: number, data: any) {
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
     'Access-Control-Allow-Headers': '*',
     'Access-Control-Expose-Headers': '*',
+    'Access-Control-Allow-Private-Network': 'true',
     'X-Server-Time': new Date().toISOString()
   });
   res.end(JSON.stringify(data));
@@ -117,7 +119,14 @@ function logActivity(wsId: string, wsTitle: string, type: GlobalActivityLog['typ
 }
 
 const server = http.createServer(async (req, res) => {
-  const parsedUrl = new URL(req.url || '/', `http://localhost:${PORT}`);
+  const hostHeader = (req.headers['x-forwarded-host'] as string) || req.headers.host || `${HOST}:${PORT}`;
+  const protocol = (req.headers['x-forwarded-proto'] as string) || 'http';
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(req.url || '/', `${protocol}://${hostHeader}`);
+  } catch {
+    parsedUrl = new URL(req.url || '/', `http://127.0.0.1:${PORT}`);
+  }
   const pathname = parsedUrl.pathname;
   const method = req.method || 'GET';
   const query = parsedUrl.searchParams;
@@ -128,6 +137,8 @@ const server = http.createServer(async (req, res) => {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
       'Access-Control-Allow-Headers': '*',
+      'Access-Control-Expose-Headers': '*',
+      'Access-Control-Allow-Private-Network': 'true',
       'Access-Control-Max-Age': '86400',
       'X-Server-Time': new Date().toISOString()
     });
@@ -142,9 +153,10 @@ const server = http.createServer(async (req, res) => {
       'Connection': 'keep-alive',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS'
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Private-Network': 'true'
     });
-    res.write(`data: ${JSON.stringify({ type: 'connected', time: new Date().toISOString() })}\n\n`);
+    res.write(`data: ${JSON.stringify({ type: 'connected', time: new Date().toISOString(), host: hostHeader })}\n\n`);
     sseClients.push(res);
 
     req.on('close', () => {
@@ -155,6 +167,26 @@ const server = http.createServer(async (req, res) => {
   }
 
   try {
+    // 0. Root / Welcome & Discovery API
+    if (pathname === '/' || pathname === '/api' || pathname === '/api/v1') {
+      return sendJson(res, 200, {
+        success: true,
+        service: 'WorkshopSync REST API',
+        version: '1.0.0',
+        status: 'online',
+        host: hostHeader,
+        protocol,
+        port: Number(PORT),
+        timestamp: new Date().toISOString(),
+        endpoints: {
+          health: '/api/v1/health',
+          overview: '/api/v1/admin/overview',
+          workshops: '/api/v1/workshops',
+          stream: `/api/v1/workshops/${mockWorkshops[0]?.id || 'ws-01'}/stream`
+        }
+      });
+    }
+
     // 1. Health Check
     if (pathname === '/api/v1/health') {
       return sendJson(res, 200, {
@@ -162,6 +194,7 @@ const server = http.createServer(async (req, res) => {
         service: 'WorkshopSync API',
         status: 'online',
         port: PORT,
+        host: hostHeader,
         workshopsCount: workshopsState.length,
         liveWorkshopsCount: workshopsState.filter((w) => w.status === 'live').length
       });
@@ -787,9 +820,10 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(Number(PORT), '0.0.0.0', () => {
-  console.log(`🚀 [Port: ${PORT}] WorkshopSync REST API 서버가 성공적으로 시작되었습니다.`);
-  console.log(`   - Base URL: http://0.0.0.0:${PORT}/api/v1`);
+server.listen(Number(PORT), HOST, () => {
+  console.log(`🚀 [Port: ${PORT}] WorkshopSync REST API 서버가 성공적으로 시작되었습니다. (Host: ${HOST})`);
+  console.log(`   - Base URL: http://${HOST}:${PORT}/api/v1`);
+  console.log(`   - Any IP / Any Host / 전방위 CORS & PNA 허용됨`);
   console.log(`   - Multi-Workshops: ${workshopsState.length}개 워크샵 로드됨`);
-  console.log(`   - SSE Stream: http://0.0.0.0:${PORT}/api/v1/workshops/${mockWorkshops[0].id}/stream`);
+  console.log(`   - SSE Stream: http://${HOST}:${PORT}/api/v1/workshops/${mockWorkshops[0]?.id || 'ws-01'}/stream`);
 });
